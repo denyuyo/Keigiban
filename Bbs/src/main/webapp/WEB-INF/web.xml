@@ -9,4 +9,41 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
+  
+  <servlet>
+	<servlet-name>InputServlet</servlet-name>
+	<servlet-class>jp.sljacademy.javaweb.InputServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>InputServlet</servlet-name>
+	<url-pattern>/InputServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+	<servlet-name>IndexServlet</servlet-name>
+	<servlet-class>jp.sljacademy.javaweb.IndexServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>IndexServlet</servlet-name>
+	<url-pattern>/IndexServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+	<servlet-name>ConfirmServlet</servlet-name>
+	<servlet-class>jp.sljacademy.javaweb.ConfirmServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>ConfirmServlet</servlet-name>
+	<url-pattern>/ConfirmServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+	<servlet-name>CompleteServlet</servlet-name>
+	<servlet-class>jp.sljacademy.javaweb.CompleteServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>CompleteServlet</servlet-name>
+	<url-pattern>/CompleteServlet</url-pattern>
+  </servlet-mapping>
+
 </web-app>
