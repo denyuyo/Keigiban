@@ -1,0 +1,5 @@
+package jp.sljacademy.bbs.bean;
+
+public class ArticleBean {
+
+}
