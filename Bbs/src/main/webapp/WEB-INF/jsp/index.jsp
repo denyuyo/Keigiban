@@ -1,5 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	// キャッシュの無効化
+	response.setHeader("pragma", "no-cache");
+	response.setHeader("Cache-Control", "no-cache");
+	response.setDateHeader("Expires", 0);
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,11 +16,18 @@
 <body>
 	<header>掲示板</header>
 		<p>あなたのIDとパスワードを入力してログインしてください。</p>
-		
-		<form action="./input.html" method="post"
+	<%
+		String errorMessages = (String) request.getAttribute("errorMessages");
+		if (errorMessages != null) {
+	%>
+	<p>
+		<%=errorMessages%>
+	</p>
+	<% } %>
+
+	<form action="/Bbs/IndexServlet" method="post"
 			name="Form1" onSubmit="return chkField1()">
 			<p>
-                
 				<label class="itemName">ID:</label>
 				<input type="text" name="id" value="">
 			</p>
@@ -25,7 +38,7 @@
 			<input class="button" type="submit" name="Login" value="ログイン">
 		</form>
 		
-		<script type="text/javascript" src="./master.js"></script>
+		<script type="text/javascript" src="css/master.js"></script>
 
 </body>
 </html>

@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import jp.sljacademy.bbs.bean.AccountBean;
 
@@ -48,5 +49,10 @@ public class AccountDao {
         }
         return returnAb;
     }
+
+	public ArrayList<AccountBean> getAccountList() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
 
 }

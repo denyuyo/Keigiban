@@ -3,18 +3,14 @@ package jp.sljacademy.bbs;
 // ログイン画面の表示
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
-import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import jp.sljacademy.bbs.bean.AccountBean;
-import jp.sljacademy.bbs.dao.AccountDao;
 import jp.sljacademy.bbs.util.PropertyLoader;
 
 /**
@@ -23,6 +19,18 @@ import jp.sljacademy.bbs.util.PropertyLoader;
 // @WebServlet("/IndexServlet")
 public class IndexServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private String check(String id, String password) {
+		String errorMessages = "";
+		
+		if (id.isEmpty()) {
+			errorMessages = "<span style=\"color: red;\">IDが入力されていません。</span><br>";
+			}
+			if (password.isEmpty()) {
+			errorMessages += "<span style=\"color: red;\">パスワードが入力されていません。</span><br>";
+		}	
+		return errorMessages;
+	}
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -39,28 +47,52 @@ public class IndexServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String resultPage = PropertyLoader.getProperty("url.jsp.index");
 		
-		try {
-	        AccountDao dao = new AccountDao();
-	        ArrayList<AccountBean> accountList = dao.getAccountList();
-	        request.setAttribute("accountList", accountList);
-	        resultPage = PropertyLoader.getProperty("url.jsp.index");
-	    } catch (NamingException | SQLException e) {
-	        // エラーが発生した場合の処理
-	        request.setAttribute("errorMessage", e.getMessage());
-	        resultPage = "/error.jsp"; // エラーページのパスを指定
-	    }
-	    
-			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-			dispatcher.forward(request, response);
-		}
+		HttpSession session = request.getSession(false);
+
+         // セッションが存在し、かつログイン状態の場合に一覧画面に遷移
+        if (session != null && session.getAttribute("id") != null) {
+        	resultPage = PropertyLoader.getProperty("url.bbs.input");
+        	response.sendRedirect(resultPage);
+        	return;
+        } else {
+           // ログインしていない場合はログイン画面にリダイレクト
+        	resultPage = PropertyLoader.getProperty("url.jsp.index");
+            request.getRequestDispatcher(resultPage).forward(request, response);
+            return;
+        }
+		
+	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
+        request.setCharacterEncoding("UTF-8");
+		
+		String resultPage = PropertyLoader.getProperty("url.jsp.index");
+		
+		String id = request.getParameter("id");
+		String password = request.getParameter("password");
+		
+		// エラーメッセージ
+		String errorMessages = check(id, password);
+		
+		// エラーがある場合 
+		if (!errorMessages.isEmpty()) {
+			request.setAttribute("errorMessages", errorMessages);
+			
+			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+			dispatcher.forward(request, response);
+			return;
+		// エラーがない場合 
+		} else {
+			HttpSession session = request.getSession(true);
+			session.setAttribute("id", id);
+			resultPage = PropertyLoader.getProperty("url.bbs.input");
+			response.sendRedirect(resultPage);
+		}
 
+		
+	}
 }
