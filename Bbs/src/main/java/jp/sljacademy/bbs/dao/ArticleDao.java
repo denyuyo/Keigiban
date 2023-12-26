@@ -1,6 +1,6 @@
 package jp.sljacademy.bbs.dao;
 
-// Articleテーブルを操作する
+// 記事情報のデータベース
 
 public class ArticleDao {
 

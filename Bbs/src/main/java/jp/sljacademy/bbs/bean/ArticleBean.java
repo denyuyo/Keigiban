@@ -1,6 +1,6 @@
 package jp.sljacademy.bbs.bean;
 
-// 記事情報保持用
+// 記事
 
 public class ArticleBean {
 	

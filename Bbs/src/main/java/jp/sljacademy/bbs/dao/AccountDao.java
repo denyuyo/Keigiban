@@ -87,7 +87,7 @@ public class AccountDao {
                 // アカウントBeanのインスタンスを生成します
                 account = new AccountBean();
                 
-                // 結果セットからIDとパスワードを取得し、アカウントBeanに設定します
+                // 結果セットからUSER_IDとUSER_PASSを取得し、アカウントBeanに設定します
                 account.setId(result.getString("USER_ID"));
                 account.setPassword(result.getString("USER_PASS"));
             }
@@ -109,6 +109,4 @@ public class AccountDao {
         // 最終的に取得したアカウント情報を返します
         return account;
     }
-
-
 }

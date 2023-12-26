@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import jp.sljacademy.bbs.util.PropertyLoader;
 
@@ -34,8 +35,25 @@ public class InputServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String resultPage = PropertyLoader.getProperty("url.jsp.input");
 		
-		RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-		dispatcher.forward(request, response);
+		// sessionを取得してる。false=取得できなかったらnullを返す
+		HttpSession session = request.getSession(false);
+		
+		// セッションが存在し、かつログイン状態の場合に一覧画面に遷移
+		if (session != null && session.getAttribute("id") != null) {
+			// urlをセットしてる
+			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+			// forward=データも一緒に転送（jspはforwardでいかなきゃいけない）
+			dispatcher.forward(request, response);
+			return;
+			
+		} else {
+          // ログインしていない場合はログイン画面にリダイレクト
+       	resultPage = PropertyLoader.getProperty("url.bbs.index");
+           // 転送
+           response.sendRedirect(resultPage);
+           return;
+       }
+
 	}
 
 	/**
