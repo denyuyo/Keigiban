@@ -13,7 +13,7 @@
 		<table class="inputArticle">
 			<tr>
 				<td class=itemName id="name">名前</td>
-				<td><input type="text" name="username" value="テスト5"
+				<td><input type="text" name="username" value=""
 					onFocus="changeColorById('name','yellow')"
 					onBlur="changeColorById('name','white')"></td>
 			</tr>
@@ -25,7 +25,7 @@
 			</tr>
 			<tr>
 				<td class="itemName" id="title">タイトル</td>
-				<td><input type="text" name="title" value="テストタイトル５"
+				<td><input type="text" name="title" value=""
 					onFocus="changeColorById('title','yellow')"
 					onBlur="changeColorById('title','white')"></td>
 			</tr>
@@ -34,7 +34,7 @@
 				<td>
 					<textarea name="text" cols="35"
 						rows="5" onFocus="changeColorById('text','yellow')"
-						onBlur="changeColorById('text','white')">テスト本文５</textarea>
+						onBlur="changeColorById('text','white')"></textarea>
 				</td>
 			</tr>
 			<tr>

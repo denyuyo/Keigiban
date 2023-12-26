@@ -5,13 +5,27 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import jp.sljacademy.bbs.bean.AccountBean;
 
 // Accountテーブルを操作する
 
 public class AccountDao {
+	
+	private DataSource source;
+	private static final String SELECT = "select * from ACCOUNT where USER_ID=? and USER_PASS=?";
+
+	
+	public AccountDao() throws NamingException {
+		InitialContext context = new InitialContext();
+		source = (DataSource)
+			context.lookup("java:comp/env/jdbc/datasource");
+	}
+	
 	// データベース接続に使用する情報
     final String jdbcId = "root";
     final String jdbcPass = "password";
@@ -29,7 +43,7 @@ public class AccountDao {
             String sql = "SELECT id, pass FROM account WHERE id = ? AND pass = ?";
             PreparedStatement ps= con.prepareStatement(sql);
 
-            ps.setString(1, ab.getName());
+            ps.setString(1, ab.getId());
             ps.setString(2, ab.getPassword());
 
             ResultSet rs = ps.executeQuery();
@@ -37,7 +51,7 @@ public class AccountDao {
 
             if (rs.next()) {
                 // 見つかったアカウント情報を戻り値にセット
-                returnAb.setName(rs.getString("name"));
+                returnAb.setId(rs.getString("id"));
                 returnAb.setPassword(rs.getString("password"));
             } else {
                 // アカウントがなければnullを返す
@@ -50,9 +64,28 @@ public class AccountDao {
         return returnAb;
     }
 
-	public ArrayList<AccountBean> getAccountList() {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+	public AccountBean getAccount(String id, String password) throws SQLException {
+		AccountBean account = new AccountBean();
+		Connection connection = source.getConnection();
+		try {
+			PreparedStatement statement = connection.prepareStatement(SELECT);
+			statement.setString(1, id);
+			statement.setString(2, password);
+			
+			ResultSet result = statement.executeQuery();
+			while (result.next()) {
+				account.setId(result.getString("id"));
+				account.setPassword(result.getString("password"));
+			}
+			statement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (connection != null) {
+				connection.close();
+			}
+		}
+		return account;
 	}
 
 }

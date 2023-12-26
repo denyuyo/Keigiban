@@ -3,7 +3,9 @@ package jp.sljacademy.bbs;
 // ログイン画面の表示
 
 import java.io.IOException;
+import java.sql.SQLException;
 
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import jp.sljacademy.bbs.bean.AccountBean;
+import jp.sljacademy.bbs.dao.AccountDao;
 import jp.sljacademy.bbs.util.PropertyLoader;
 
 /**
@@ -30,6 +34,19 @@ public class IndexServlet extends HttpServlet {
 			errorMessages += "<span style=\"color: red;\">パスワードが入力されていません。</span><br>";
 		}	
 		return errorMessages;
+	}
+	
+	@SuppressWarnings("unused")
+	private boolean isAccountValid(String id, String password) {
+	    try {
+	        AccountDao dao = new AccountDao();
+	        AccountBean account = dao.getAccount(id, password);
+	        return (account != null && account.getPassword().equals(password));
+	    } catch (NamingException | SQLException e) {
+	        // エラーが発生した場合はログに記録するなどの適切な処理を行う
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 
 	/**
@@ -60,7 +77,7 @@ public class IndexServlet extends HttpServlet {
             request.getRequestDispatcher(resultPage).forward(request, response);
             return;
         }
-		
+        
 	}
 
 	/**
@@ -88,11 +105,34 @@ public class IndexServlet extends HttpServlet {
 		// エラーがない場合 
 		} else {
 			HttpSession session = request.getSession(true);
-			session.setAttribute("id", id);
-			resultPage = PropertyLoader.getProperty("url.bbs.input");
-			response.sendRedirect(resultPage);
-		}
+			
+			try {
+		        AccountDao dao = new AccountDao();
+		        AccountBean account = dao.getAccount(id, password);
 
+		        // アカウントが存在しない場合
+		        if (account == null) {
+		            // ログインできませんというエラーメッセージを設定
+		            request.setAttribute("errorMessages", "ログインできません");
+
+		            // エラーページにフォワード
+		            RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+		            dispatcher.forward(request, response);
+		            return;
+		        }
+
+		        // アカウントが存在する場合はセッションに情報を設定
+		        session.setAttribute("id", id);
+		        request.setAttribute("Account", account);
+		    } catch (NamingException e) { 
+		        request.setAttribute("errorMessage", e.getMessage());
+		    } catch (SQLException e) { 
+		        request.setAttribute("errorMessage", e.getMessage());
+		    }
+
+		    resultPage = PropertyLoader.getProperty("url.bbs.input");
+		    response.sendRedirect(resultPage);
+		}
 		
 	}
 }
