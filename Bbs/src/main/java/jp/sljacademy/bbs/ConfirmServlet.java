@@ -4,10 +4,13 @@ package jp.sljacademy.bbs;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import jp.sljacademy.bbs.util.PropertyLoader;
 
 /**
  * Servlet implementation class ConfirmServlet
@@ -29,8 +32,10 @@ public class ConfirmServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		String resultPage = PropertyLoader.getProperty("url.jsp.confirm");
+		
+		RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+		dispatcher.forward(request, response);
 	}
 
 	/**

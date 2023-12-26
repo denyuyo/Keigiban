@@ -28,10 +28,10 @@ public class IndexServlet extends HttpServlet {
 		String errorMessages = "";
 		
 		if (id.isEmpty()) {
-			errorMessages = "<span style=\"color: red;\">IDが入力されていません。</span><br>";
+			errorMessages = "IDが入力されていません。<br>";
 			}
 			if (password.isEmpty()) {
-			errorMessages += "<span style=\"color: red;\">パスワードが入力されていません。</span><br>";
+			errorMessages += "パスワードが入力されていません。<br>";
 		}	
 		return errorMessages;
 	}

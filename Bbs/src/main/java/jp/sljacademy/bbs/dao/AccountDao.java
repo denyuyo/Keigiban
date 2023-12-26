@@ -64,28 +64,51 @@ public class AccountDao {
         return returnAb;
     }
 
-	public AccountBean getAccount(String id, String password) throws SQLException {
-		AccountBean account = new AccountBean();
-		Connection connection = source.getConnection();
-		try {
-			PreparedStatement statement = connection.prepareStatement(SELECT);
-			statement.setString(1, id);
-			statement.setString(2, password);
-			
-			ResultSet result = statement.executeQuery();
-			while (result.next()) {
-				account.setId(result.getString("id"));
-				account.setPassword(result.getString("password"));
-			}
-			statement.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			if (connection != null) {
-				connection.close();
-			}
-		}
-		return account;
-	}
+    public AccountBean getAccount(String id, String password) throws SQLException {
+        // アカウント情報を格納するための変数を初期化します
+        AccountBean account = null;
+        
+        // データベースへの接続を確立します
+        Connection connection = source.getConnection();
+        
+        try {
+            // SQLクエリの準備
+            PreparedStatement statement = connection.prepareStatement(SELECT);
+            
+            // プレースホルダにIDとパスワードを設定します
+            statement.setString(1, id);
+            statement.setString(2, password);
+            
+            // クエリを実行し、結果を取得します
+            ResultSet result = statement.executeQuery();
+            
+            // 結果が存在する場合、アカウント情報を取得して変数に格納します
+            while (result.next()) {
+                // アカウントBeanのインスタンスを生成します
+                account = new AccountBean();
+                
+                // 結果セットからIDとパスワードを取得し、アカウントBeanに設定します
+                account.setId(result.getString("USER_ID"));
+                account.setPassword(result.getString("USER_PASS"));
+            }
+            
+            // ステートメントをクローズします
+            statement.close();
+            
+        } catch (SQLException e) {
+            // エラーが発生した場合、エラー内容を出力します
+            e.printStackTrace();
+            
+        } finally {
+            // データベース接続をクローズします
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        
+        // 最終的に取得したアカウント情報を返します
+        return account;
+    }
+
 
 }

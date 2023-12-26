@@ -5,10 +5,10 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="css/master.css" type="text/css">
-<title>一覧画面</title>
+<title>掲示板</title>
 </head>
 <body>
-	<header> 一覧画面 </header>
+	<header> 掲示板 </header>
 	<form action="./confirm.jsp" method="post" id="form">
 		<table class="inputArticle">
 			<tr>

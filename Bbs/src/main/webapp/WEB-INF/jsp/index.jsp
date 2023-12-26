@@ -16,6 +16,8 @@
 <body>
 	<header>掲示板</header>
 		<p>あなたのIDとパスワードを入力してログインしてください。</p>
+		
+		<span style="color: red;">
 	<%
 		String errorMessages = (String) request.getAttribute("errorMessages");
 		if (errorMessages != null) {
@@ -24,6 +26,7 @@
 		<%=errorMessages%>
 	</p>
 	<% } %>
+	</span>
 
 	<form action="/Bbs/IndexServlet" method="post"
 			name="Form1" onSubmit="return chkField1()">
