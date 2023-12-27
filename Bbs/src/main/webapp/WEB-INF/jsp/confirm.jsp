@@ -1,5 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"
+    import="jp.sljacademy.bbs.bean.ArticleBean" %>
+<%
+	// キャッシュの無効化
+	response.setHeader("pragma", "no-cache");
+	response.setHeader("Cache-Control", "no-cache");
+	response.setDateHeader("Expires", 0);
+	
+	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
+
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,11 +27,11 @@
 			<tr>
 				<td class="itemName">名前</td>
 				<!-- getAttribute=sessionにセットされた値を取得 -->
-				<td style="color: #ff9900;"><%= request.getAttribute("name") %></td>
+				<td style="color: #ff9900;"><%= articleBean.getName() %></td>
 			</tr>
 			<tr>
 				<td class="itemName">E-mail</td>
-				<td  style="color: #ff9900;"><%= request.getAttribute("email") %></td>
+				<td  style="color: #ff9900;"><%= articleBean.getEmail() %></td>
 			</tr>
 			<tr>
 				<td class="itemName">タイトル</td>

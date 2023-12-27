@@ -1,5 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"
+    import="jp.sljacademy.bbs.bean.ArticleBean" %>
+<%
+	// キャッシュの無効化
+	response.setHeader("pragma", "no-cache");
+	response.setHeader("Cache-Control", "no-cache");
+	response.setDateHeader("Expires", 0);
+	
+	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
+
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,15 +24,15 @@
 		<table class="inputArticle">
 			<tr>
 				<td class=itemName id="name">名前</td>
-				<td><input type="text" name="username" 
+				<td><input type="text" name="username" value="<%= articleBean.getName() %>"
 					onFocus="changeColorById('name','yellow')"
-					onBlur="changeColorById('name','white')"><%= request.getAttribute("name") %></td>
+					onBlur="changeColorById('name','white')"></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="email">E-mail</td>
-				<td><input type="text" name="email"
+				<td><input type="text" name="email" value="<%= articleBean.getEmail() %>"
 					onFocus="changeColorById('email','yellow')"
-					onBlur="changeColorById('email','white')"><%= request.getAttribute("email") %></td>
+					onBlur="changeColorById('email','white')"></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="title">タイトル</td>

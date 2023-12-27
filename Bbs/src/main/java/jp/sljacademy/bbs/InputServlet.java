@@ -40,6 +40,7 @@ public class InputServlet extends HttpServlet {
 		
 		// セッションが存在し、かつログイン状態の場合に一覧画面に遷移
 		if (session != null && session.getAttribute("id") != null) {
+			
 			// urlをセットしてる
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 			// forward=データも一緒に転送（jspはforwardでいかなきゃいけない）
@@ -63,5 +64,6 @@ public class InputServlet extends HttpServlet {
 		// Submitボタンが押されたときの処理
 		 String resultPage = PropertyLoader.getProperty("url.bbs.confirm");
 		    response.sendRedirect(resultPage);
+		    		    
 	}
 }

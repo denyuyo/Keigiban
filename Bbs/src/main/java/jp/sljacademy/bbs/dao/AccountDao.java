@@ -1,7 +1,6 @@
 package jp.sljacademy.bbs.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,47 +23,6 @@ public class AccountDao {
 		source = (DataSource)
 			context.lookup("java:comp/env/jdbc/datasource");
 	}
-	
-	// データベース接続に使用する情報
-	final String jdbcId = "root";
-	final String jdbcPass = "password";
-	final String jdbcUrl = "jdbc:mysql://localhost:3306/test?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=JST";
-
-	// ログインアカウントを探す
-	public AccountBean findAccount(AccountBean ab) {
-		
-		// 戻り値の用意
-		AccountBean returnAb = new AccountBean();
-		
-		// データベースへ接続
-		try (Connection con = DriverManager.getConnection(jdbcUrl, jdbcId, jdbcPass)) {
-			
-			// sqlコマンドで入力されたidとpassの人を探してる
-			String sql = "SELECT id, pass, name, email FROM account WHERE id = ? AND pass = ?";
-			PreparedStatement ps= con.prepareStatement(sql);
-			
-			ps.setString(1, ab.getId());
-			ps.setString(2, ab.getPassword());
-			
-			ResultSet rs = ps.executeQuery();
-			
-			
-			if (rs.next()) {
-				// 見つかったアカウント情報を戻り値にセット
-				returnAb.setId(rs.getString("id"));
-				returnAb.setPassword(rs.getString("password"));
-				returnAb.setName(rs.getString("name"));
-	            returnAb.setEmail(rs.getString("email"));
-			} else {
-				// アカウントがなければnullを返す
-				return null;
-			}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return null;
-					}
-					return returnAb;
-				}
 	
 	public AccountBean getAccount(String id, String password) throws SQLException {
 		// アカウント情報を格納するための変数を初期化します

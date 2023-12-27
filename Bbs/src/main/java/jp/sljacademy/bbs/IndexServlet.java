@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import jp.sljacademy.bbs.bean.AccountBean;
+import jp.sljacademy.bbs.bean.ArticleBean;
 import jp.sljacademy.bbs.dao.AccountDao;
 import jp.sljacademy.bbs.util.PropertyLoader;
 
@@ -77,12 +78,11 @@ public class IndexServlet extends HttpServlet {
 			resultPage = PropertyLoader.getProperty("url.bbs.input");
 			response.sendRedirect(resultPage);
 			return;
-			} else {
-				// ログインしていない場合はログイン画面にリダイレクト
-				resultPage = PropertyLoader.getProperty("url.jsp.index");
-				request.getRequestDispatcher(resultPage).forward(request, response);
-				return;
-			}
+		} 
+		// ログインしていない場合はログイン画面にリダイレクト
+		resultPage = PropertyLoader.getProperty("url.jsp.index");
+		request.getRequestDispatcher(resultPage).forward(request, response);
+		return;
 	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -107,31 +107,36 @@ public class IndexServlet extends HttpServlet {
 			dispatcher.forward(request, response);
 			return;
 		// エラーがない場合 
-		} else {
-			HttpSession session = request.getSession(true);
-			try {
-				AccountDao dao = new AccountDao();
-				AccountBean account = dao.getAccount(id, password);
-				// アカウントが存在しない場合
-				if (account == null) {
-					// ログインできませんというエラーメッセージを設定
-					request.setAttribute("errorMessages", "ログインできません");
-					// エラーページにフォワード
-					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-					dispatcher.forward(request, response);
-					return;
-				}
-				// アカウントが存在する場合はセッションに情報を設定
-				session.setAttribute("id", id);
-				request.setAttribute("Account", account);
-				} catch (NamingException e) { 
-					request.setAttribute("errorMessage", e.getMessage());
-				} catch (SQLException e) { 
-					request.setAttribute("errorMessage", e.getMessage());
-				}
-			
-			resultPage = PropertyLoader.getProperty("url.bbs.input");
-			response.sendRedirect(resultPage);
 		}
+		HttpSession session = request.getSession(true);
+		try {
+			AccountDao dao = new AccountDao();
+			AccountBean account = dao.getAccount(id, password);
+			// アカウントが存在しない場合
+			if (account == null) {
+				// ログインできませんというエラーメッセージを設定
+				request.setAttribute("errorMessages", "ログインできません");
+				// エラーページにフォワード
+					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+				dispatcher.forward(request, response);
+				return;
+			}
+				
+			ArticleBean articleBean = new ArticleBean();
+			articleBean.setName(account.getName());
+			articleBean.setEmail(account.getEmail());
+				
+			// アカウントが存在する場合はセッションに情報を保存
+			session.setAttribute("ArticleBean", articleBean);
+			// ログイン☑
+			session.setAttribute("id", id);
+				
+		} catch (NamingException e) { 
+			request.setAttribute("errorMessage", e.getMessage());
+		} catch (SQLException e) { 
+			request.setAttribute("errorMessage", e.getMessage());
+		}
+		resultPage = PropertyLoader.getProperty("url.bbs.input");
+		response.sendRedirect(resultPage);
 	}
 }
