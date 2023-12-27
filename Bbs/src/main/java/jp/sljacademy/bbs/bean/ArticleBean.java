@@ -10,6 +10,11 @@ public class ArticleBean {
 	private String text;
 	private String colorId;
 	
+	public ArticleBean()  {
+		title = "";
+		text = "";
+	}
+	
 	public String getColorId() {
 		return colorId;
 	}

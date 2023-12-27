@@ -15,7 +15,6 @@ function chkField1(){
 					return true;
 				}
 }
-
   
    let form = document.getElementById('form');
   

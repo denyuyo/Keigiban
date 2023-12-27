@@ -36,33 +36,32 @@
 			</tr>
 			<tr>
 				<td class="itemName" id="title">タイトル</td>
-				<td><input type="text" name="title" value=""
+				<td><input type="text" name="title" value="<%= articleBean.getTitle() %>"
 					onFocus="changeColorById('title','yellow')"
 					onBlur="changeColorById('title','white')"></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="text">本文</td>
 				<td>
-					<textarea name="text" cols="35"
+					<textarea name="text" cols="35" 
 						rows="5" onFocus="changeColorById('text','yellow')"
-						onBlur="changeColorById('text','white')"></textarea>
+						onBlur="changeColorById('text','white')"><%= articleBean.getText() %></textarea>
 				</td>
 			</tr>
 			<tr>
 				<td class="itemName">文字色</td>
-				<td><input class="radio" type="radio" name="color" value="0"
-					id="color_0" onClick="changeColorByName('black')"> <label
-					for="color_0">黒</label> <input class="radio" type="radio"
-					name="color" value="1" id="color_1"
-					onClick="changeColorByName('blue')"> <label for="color_1"
-					style="color: blue;">青</label> <input class="radio" type="radio"
-					name="color" value="2" id="color_2"
-					onClick="changeColorByName('orange')" checked> <label
-					for="color_2" style="color: #ff9900">橙</label></td>
+				<td>
+					<input class="radio" type="radio" name="color" value="0"id="color_0" >
+					<label for="color_0" style="color: black;">黒</label> 
+					<input class="radio" type="radio" name="color" value="1" id="color_1"  checked> 
+					<label for="color_1" style="color: blue;">青</label>
+					<input class="radio" type="radio" name="color" value="2" id="color_2"> 
+					<label for="color_2" style="color: #ff9900">橙</label>
+				</td>
 			</tr>
 		</table>
-		<input class="button" type="reset" name="clear" value="クリア"> <input
-			class="button" type="submit" name="Submit" value="確認">
+		<input class="button" type="reset" name="clear" value="クリア">
+		<input class="button" type="submit" name="Submit" value="確認">
 	</form>
 	<hr>
 	<table class="postedArticle">

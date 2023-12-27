@@ -27,7 +27,7 @@
 			<tr>
 				<td class="itemName">名前</td>
 				<!-- getAttribute=sessionにセットされた値を取得 -->
-				<td style="color: #ff9900;"><%= articleBean.getName() %></td>
+				<td style="color: <%  %>>;"><%= articleBean.getName() %></td>
 			</tr>
 			<tr>
 				<td class="itemName">E-mail</td>
@@ -43,8 +43,7 @@
 				<td  style="color: #ff9900;"><%= request.getParameter("text") %></td>
 			</tr>
 		</table>
-		<input class="button" type="button" name="Back"   value="戻る"
-			onClick="history.back()">
+		<input class="button" type="button" name="Back"   value="戻る">
 		<input class="button" type="submit" name="Submit" value="投稿">
 	</form>
 	<script type="text/javascript" src="css/master.js"></script>
