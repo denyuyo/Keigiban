@@ -27,7 +27,7 @@ public class InputServlet extends HttpServlet {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -47,20 +47,21 @@ public class InputServlet extends HttpServlet {
 			return;
 			
 		} else {
-          // ログインしていない場合はログイン画面にリダイレクト
-       	resultPage = PropertyLoader.getProperty("url.bbs.index");
-           // 転送
-           response.sendRedirect(resultPage);
-           return;
-       }
-
+			// ログインしていない場合はログイン画面にリダイレクト
+			resultPage = PropertyLoader.getProperty("url.bbs.index");
+			// 転送
+			response.sendRedirect(resultPage);
+			return;
+		}
 	}
-
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		// Submitボタンが押されたときの処理
+		 String resultPage = PropertyLoader.getProperty("url.bbs.confirm");
+		    response.sendRedirect(resultPage);
 	}
-
 }

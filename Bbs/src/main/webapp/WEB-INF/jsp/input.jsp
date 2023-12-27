@@ -9,19 +9,19 @@
 </head>
 <body>
 	<header> 掲示板 </header>
-	<form action="./confirm.jsp" method="post" id="form">
+	<form action="/Bbs/ConfirmServlet" method="post" id="form">
 		<table class="inputArticle">
 			<tr>
 				<td class=itemName id="name">名前</td>
-				<td><input type="text" name="username" value=""
+				<td><input type="text" name="username" 
 					onFocus="changeColorById('name','yellow')"
-					onBlur="changeColorById('name','white')"></td>
+					onBlur="changeColorById('name','white')"><%= request.getAttribute("name") %></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="email">E-mail</td>
-				<td><input type="text" name="email" value=""
+				<td><input type="text" name="email"
 					onFocus="changeColorById('email','yellow')"
-					onBlur="changeColorById('email','white')"></td>
+					onBlur="changeColorById('email','white')"><%= request.getAttribute("email") %></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="title">タイトル</td>
