@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"
-    import="jp.sljacademy.bbs.bean.ArticleBean" %>
+	pageEncoding="UTF-8"
+   	import="jp.sljacademy.bbs.bean.ArticleBean"
+   	import="java.util.List"
+	import="jp.sljacademy.bbs.bean.ColorMasterBean"
+%>
 <%
 	// キャッシュの無効化
 	response.setHeader("pragma", "no-cache");
@@ -8,6 +11,10 @@
 	response.setDateHeader("Expires", 0);
 	
 	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
+	// 色のリストをリクエストから取得
+	List<ColorMasterBean> colorList = (List<ColorMasterBean>) request.getAttribute("colorList");
+	// 選択された色のIDを取得（int型のプリミティブを想定）
+	String selectedColorId = articleBean.getColorId();
 
 %>
 
@@ -15,7 +22,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="css/master.css" type="text/css">
+<link rel="stylesheet" href="css/origin.css" type="text/css">
 <title>掲示板</title>
 </head>
 <body>
@@ -42,23 +49,29 @@
 			</tr>
 			<tr>
 				<td class="itemName" id="text">本文</td>
-				<td>
-					<textarea name="text" cols="35" 
-						rows="5" onFocus="changeColorById('text','yellow')"
+				<td><textarea name="text" cols="35" rows="5"
+						onFocus="changeColorById('text','yellow')"
 						onBlur="changeColorById('text','white')"><%= articleBean.getText() %></textarea>
 				</td>
-			</tr>
+			
 			<tr>
 				<td class="itemName">文字色</td>
 				<td>
-					<input class="radio" type="radio" name="color" value="0"id="color_0" >
-					<label for="color_0" style="color: black;">黒</label> 
-					<input class="radio" type="radio" name="color" value="1" id="color_1"  checked> 
-					<label for="color_1" style="color: blue;">青</label>
-					<input class="radio" type="radio" name="color" value="2" id="color_2"> 
-					<label for="color_2" style="color: #ff9900">橙</label>
+					<%
+						// colorListがnullでないことを確認
+						if (colorList != null) {
+							for (ColorMasterBean color : colorList) {
+								// nullチェックを追加
+								String colorId = color.getColorId();
+								String checkedAttribute = (colorId != null && colorId.equals(selectedColorId)) ? " checked" : "";
+					%>
+						<input class="radio" type="radio" name="color" value="<%= color.getColorId() %>" id="color_<%= color.getColorId() %>" <%= checkedAttribute %> >
+						<label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;"><%= color.getColorName() %></label>
+					<%}}%>
+
 				</td>
 			</tr>
+
 		</table>
 		<input class="button" type="reset" name="clear" value="クリア">
 		<input class="button" type="submit" name="Submit" value="確認">

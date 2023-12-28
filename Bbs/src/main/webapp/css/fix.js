@@ -1,5 +1,5 @@
 function changeColorByName(color){
-			document.getElementsByName("username")[0].style.color = color;
+			document.getElementsByName("name")[0].style.color = color;
 			document.getElementsByName("email")[0].style.color = color;
 			document.getElementsByName("title")[0].style.color = color;
 			document.getElementsByName("text")[0].style.color = color;
@@ -11,7 +11,7 @@ function chkField1(){
 					return false;
 				}else {
 					alert("ID:" + document.Form1.userID.value + " password:" +
-							document.Form1.password.value);
+							document.Form1.password.value);s
 					return true;
 				}
 }

@@ -1,44 +1,43 @@
 package jp.sljacademy.bbs.dao;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.DataSource;
+import javax.sql.DataSource;  // 正しいインポート
 
 import jp.sljacademy.bbs.bean.ColorMasterBean;
 
-// ColorMasterテーブルを操作する
-
 public class ColorMasterDao {
-	
-	private DataSource source;
-	
-	public ColorMasterDao() throws NamingException {
-		InitialContext context = new InitialContext();
-		source = (DataSource)
-			context.lookup("java:comp/env/jdbc/datasource");
-	}
-	
-	// テーブルから色情報を取得するメソッド
-	public ColorMasterBean getColorInformation() throws SQLException {
-		ColorMasterBean colorMasterBean = new ColorMasterBean();
-		
-		// データベースへの接続を確立します
-		Connection connection = source.getConnection();
-		
-		
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM COLOR_MASTER");
-			ResultSet resultSet = preparedStatement.executeQuery();
-			
-			
-		} catch (SQLException e) {
-				e.printStackTrace(); // エラーハンドリングは適切に行うべき
-		}
-		return colorMasterBean;
-	}
+    
+    private DataSource source;
+
+    public ColorMasterDao() throws NamingException {
+        InitialContext context = new InitialContext();
+        source = (DataSource) context.lookup("java:comp/env/jdbc/datasource");
+    }
+
+    public List<ColorMasterBean> getAllColors() throws SQLException {
+        List<ColorMasterBean> colors = new ArrayList<>();
+        String sql = "SELECT COLOR_ID, COLOR_CODE, COLOR_NAME FROM COLOR_MASTER";
+
+        try (Connection conn = source.getConnection();  // DataSourceからの接続
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                ColorMasterBean color = new ColorMasterBean();
+                color.setColorId(rs.getString("COLOR_ID"));
+                color.setColorCode(rs.getString("COLOR_CODE"));
+                color.setColorName(rs.getString("COLOR_NAME"));
+                colors.add(color);
+            }
+        }
+        return colors;
+    }
 }

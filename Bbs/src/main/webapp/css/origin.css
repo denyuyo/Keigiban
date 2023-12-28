@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: #2c0346; /* 宇宙の深い紫色 */
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('path_to_your_space_background_image.jpg'); /* 宇宙の背景画像パス */
+    background-size: cover;
+}
+
+header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background-color: #5d54a4; /* 紫色のヘッダー */
+    padding: 10px 0;
+    text-align: center;
+    font-size: 2em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 320px;
+}
+
+.form-group label {
+    margin-bottom: 0.5em;
+    display: block;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 1em;
+    border: none;
+    border-radius: 4px;
+}
+
+input.button {
+    width: 100%;
+    padding: 10px;
+    background-color: #8167a9; /* ボタンの紫色 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input.button:hover {
+    background-color: #6e57a5;
+}
+
+.error-messages {
+    color: #f76c6c;
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.login-message {
+    text-align: center;
+    margin: 20px 0;
+    color: #ffffff;
+    font-size: 1.2em;
+}
