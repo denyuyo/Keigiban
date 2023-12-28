@@ -1,0 +1,49 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    background: #2c0346; /* 宇宙の深い紫色 */
+    color: #00ff00; /* 明るいネオングリーン */
+}
+
+header {
+    background-color: #5d54a4; /* 紫色のヘッダー */
+    color: #00ff00; /* ヘッダーのテキスト色 */
+}
+
+.form-container, .postedArticle {
+    background-color: rgba(0, 0, 0, 0.8); /* 透過の黒 */
+    border: 1px solid #00ff00; /* ネオングリーンの境界線 */
+    box-shadow: 0 0 10px #00ff00; /* ネオングリーンのシャドウ */
+    color: #ffffff;
+}
+
+.inputArticle input[type="text"],
+.inputArticle textarea {
+    background-color: #000000; /* 背景黒 */
+    color: #00ff00; /* テキスト色 */
+    border: 1px solid #00ff00; /* 境界線 */
+}
+
+.inputArticle label {
+    color: #00ff00; /* ラベル色 */
+}
+
+.button {
+    background-color: #5d54a4; /* ボタン背景色 */
+    color: #ffffff;
+    border: 1px solid #00ff00;
+}
+
+.button:hover {
+    background-color: #00ff00; /* ホバー時の背景色 */
+    color: #000000;
+}
+
+.articleId, .articleTitle, .articleText, .articleDate {
+    color: #00ff00; /* 記事のテキスト色 */
+}
+
+/* その他必要なスタイル */

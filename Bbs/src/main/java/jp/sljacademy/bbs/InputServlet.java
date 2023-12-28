@@ -51,28 +51,36 @@ public class InputServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		// フォームから送信された各パラメータを取得
-		String name = request.getParameter("username");
-		String email = request.getParameter("email");
-		String title = request.getParameter("title");
-		String text = request.getParameter("text");
-		String color = request.getParameter("color");
+		String resultPage = PropertyLoader.getProperty("url.jsp.input");
 		
-		// 新しいArticleBeanインスタンスを作成し、取得したデータをセット
-		ArticleBean articleBean = new ArticleBean();
-		articleBean.setName(name);
-		articleBean.setEmail(email);
-		articleBean.setTitle(title);
-		articleBean.setText(text);
-		articleBean.setColorId(color);
+		// 'クリア'ボタンのパラメータをチェック
+		String clear = request.getParameter("clear");
 		
-		// 新しいセッションを取得（存在しない場合は新しく作成）
+		// セッションを取得（新しく作成される可能性あり）
 		HttpSession session = request.getSession();
-		// セッションにArticleBeanインスタンスをセット
-		session.setAttribute("ArticleBean", articleBean);
 		
-		// 確認ページのURLを取得し、そのページにリダイレクト
-		String resultPage = PropertyLoader.getProperty("url.bbs.confirm");
-		response.sendRedirect(resultPage);
+		// 'クリア'ボタンが押された場合、特定のフィールドをリセット
+		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
+		if ("クリア".equals(clear)) {
+			articleBean.setTitle("");
+			articleBean.setText("");
+			articleBean.setColorId(""); // 初期値にリセット
+			
+			// 同じページにフォワード
+			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+			dispatcher.forward(request, response);
+			return;
+		}else {
+			// 以下は通常のフォーム処理
+			articleBean.setName(request.getParameter("name"));
+			articleBean.setEmail(request.getParameter("email"));
+			articleBean.setTitle(request.getParameter("title"));
+			articleBean.setText(request.getParameter("text"));
+			articleBean.setColorId(request.getParameter("color"));	
+			
+			// 確認ページへリダイレクト
+			resultPage = PropertyLoader.getProperty("url.bbs.confirm");
+			response.sendRedirect(resultPage);
+		}
 	}
 }

@@ -11,10 +11,9 @@
 	response.setDateHeader("Expires", 0);
 	
 	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
-	// 色のリストをリクエストから取得
+	// 選択された色のIDを取得（String型を想定）
+	String selectedColorId = articleBean != null ? articleBean.getColorId() : null;
 	List<ColorMasterBean> colorList = (List<ColorMasterBean>) request.getAttribute("colorList");
-	// 選択された色のIDを取得（int型のプリミティブを想定）
-	String selectedColorId = articleBean.getColorId();
 
 %>
 
@@ -22,7 +21,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="css/origin.css" type="text/css">
+<link rel="stylesheet" href="css/input.css" type="text/css">
 <title>掲示板</title>
 </head>
 <body>
@@ -57,24 +56,21 @@
 			<tr>
 				<td class="itemName">文字色</td>
 				<td>
-					<%
-						// colorListがnullでないことを確認
-						if (colorList != null) {
-							for (ColorMasterBean color : colorList) {
-								// nullチェックを追加
-								String colorId = color.getColorId();
-								String checkedAttribute = (colorId != null && colorId.equals(selectedColorId)) ? " checked" : "";
-					%>
-						<input class="radio" type="radio" name="color" value="<%= color.getColorId() %>" id="color_<%= color.getColorId() %>" <%= checkedAttribute %> >
-						<label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;"><%= color.getColorName() %></label>
-					<%}}%>
-
+					<% if (colorList != null) {
+                        for (ColorMasterBean color : colorList) {
+                            String checkedAttribute = color.getColorId().equals(selectedColorId) ? " checked" : ""; %>
+                            <input class="radio" type="radio" name="color" value="<%= color.getColorId() %>" id="color_<%= color.getColorId() %>" <%= checkedAttribute %> >
+                            <label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;"><%= color.getColorName() %></label>
+                        <% }
+                    } %>
 				</td>
 			</tr>
-
+			
 		</table>
-		<input class="button" type="reset" name="clear" value="クリア">
 		<input class="button" type="submit" name="Submit" value="確認">
+	</form>
+	<form action="/Bbs/InputServlet" method="post" id="clearForm">
+		<input class="button" type="submit" name="clear" value="クリア">
 	</form>
 	<hr>
 	<table class="postedArticle">
@@ -131,7 +127,7 @@
 			</td>
 		</tr>
 	</table>
-	<script type="text/javascript" src="css/master.js"></script>
+	<script type="text/javascript" src="css/fix.js"></script>
 
 </body>
 </html>

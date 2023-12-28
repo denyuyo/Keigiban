@@ -5,19 +5,21 @@ body {
     padding: 0;
     font-family: 'Orbitron', sans-serif;
     background: #2c0346; /* 宇宙の深い紫色 */
-    color: #ffffff;
+    color: #333333;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url('path_to_your_space_background_image.jpg'); /* 宇宙の背景画像パス */
-    background-size: cover;
+/*    background-image: url('Space_cat_2023-07-09.jpg');  宇宙の背景画像パス */
+/*    background-size: cover;*/
+/*    background-position: center;  画像を中央に配置 */
 }
 
 header {
     position: absolute;
     top: 0;
     width: 100%;
+    color: #ffffff;
     background-color: #5d54a4; /* 紫色のヘッダー */
     padding: 10px 0;
     text-align: center;
@@ -71,6 +73,6 @@ input.button:hover {
 .login-message {
     text-align: center;
     margin: 20px 0;
-    color: #ffffff;
+    color: #333333;
     font-size: 1.2em;
 }
