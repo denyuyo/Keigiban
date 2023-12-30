@@ -70,7 +70,7 @@
 		<input class="button" type="submit" name="Submit" value="確認">
 	</form>
 	<form action="/Bbs/InputServlet" method="post" id="clearForm">
-		<input class="button" type="submit" name="clear" value="クリア">
+		<input class="button" type="button" name="clear" value="クリア">
 	</form>
 	<hr>
 	<table class="postedArticle">

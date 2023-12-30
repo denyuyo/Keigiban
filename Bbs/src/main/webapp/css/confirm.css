@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+body {
+    display: flex;
+    flex-direction: column; /* 縦方向の配置に変更 */
+    justify-content: flex-start; /* 先頭からの配置 */
+    align-items: center; /* 横方向も中心に */
+    height: 50vh; /* ビューポートの高さを100%に */
+    padding: 20px; /* 余白を設定 */
+    background: #120f38; /* 背景色 */
+    color: #f2f2f2; /* 文字色 */
+    font-family: 'Orbitron', sans-serif;
+}
+
+header {
+	align-self: flex-start; /* 開始位置に合わせる */
+    width: 100%; /* 幅を100%に */
+    text-align: center; /* 中央寄せ */
+    padding: 20px 0;
+    margin-bottom: 30px; /* 下部のマージン */
+    font-size: 2.5em; /* フォントサイズを大きく */
+    color: #ff2079; /* ネオンピンクの文字色 */
+    background-color: #120f38; /* 深い紫の背景色 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 影を付ける */
+}
+
+
+.inputArticle {
+    background-color: rgba(255, 255, 255, 0.1); /* 透明感のある背景 */
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 600px;
+}
+
+.inputArticle td {
+    padding: 10px;
+    border: 1px solid #f2f2f2; /* 明るい枠線 */
+}
+
+.itemName {
+    color: #00aaff; /* 青色のラベル */
+    font-weight: bold;
+}
+
+.button {
+    background-color: #ff2079; /* ネオンピンク */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background-color: #ff509e;
+}
