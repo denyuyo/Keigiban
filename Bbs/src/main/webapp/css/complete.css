@@ -1,0 +1,50 @@
+@charset "UTF-8";@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+    background-color: #0a0a0a; /* 暗い背景色 */
+    color: #00ff00; /* 明るい緑色のテキスト */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('path/to/your/futuristic-background.jpg'); /* サイバーパンク風の背景画像 */
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+header {
+    width: 100%;
+    text-align: center;
+    font-size: 2em;
+    padding: 20px 0;
+    background-color: #121212; /* ヘッダーの暗い背景色 */
+    color: #0d0; /* ヘッダーの文字色 */
+}
+
+.main-content {
+    width: 50%;
+    background-color: rgba(0, 0, 0, 0.8); /* 半透明の黒背景 */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0f0; /* 緑色のボックスシャドウ */
+    text-align: center;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #006600; /* ボタンの背景色 */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #009900; /* ホバー時の背景色変更 */
+}

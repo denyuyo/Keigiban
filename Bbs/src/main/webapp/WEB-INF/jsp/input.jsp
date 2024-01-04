@@ -11,9 +11,8 @@
 	response.setDateHeader("Expires", 0);
 	
 	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
-	// 選択された色のIDを取得（String型を想定）
-	String selectedColorId = articleBean != null ? articleBean.getColorId() : null;
-	List<ColorMasterBean> colorList = (List<ColorMasterBean>) request.getAttribute("colorList");
+	// 選択された色のIDを取得
+	List<ColorMasterBean> colors = (List<ColorMasterBean>) request.getAttribute("colors");
 
 %>
 
@@ -22,7 +21,15 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="css/input.css" type="text/css">
-<title>掲示板</title>
+<title>記事入力画面</title>
+<script>
+    function changeColor(colorCode) {
+        var elements = document.querySelectorAll('.inputArticle td input');
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.color = '#' + colorCode;
+        }
+    }
+</script>
 </head>
 <body>
 	<header> 掲示板 </header>
@@ -30,39 +37,30 @@
 		<table class="inputArticle">
 			<tr>
 				<td class=itemName id="name">名前</td>
-				<td><input type="text" name="username" value="<%= articleBean.getName() %>"
-					onFocus="changeColorById('name','yellow')"
-					onBlur="changeColorById('name','white')"></td>
+				<td><input type="text" name="username" value="<%= articleBean.getName() %>"></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="email">E-mail</td>
-				<td><input type="text" name="email" value="<%= articleBean.getEmail() %>"
-					onFocus="changeColorById('email','yellow')"
-					onBlur="changeColorById('email','white')"></td>
+				<td><input type="text" name="email" value="<%= articleBean.getEmail() %>"></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="title">タイトル</td>
-				<td><input type="text" name="title" value="<%= articleBean.getTitle() %>"
-					onFocus="changeColorById('title','yellow')"
-					onBlur="changeColorById('title','white')"></td>
+				<td><input type="text" name="title" value="<%= articleBean.getTitle() %>"></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="text">本文</td>
-				<td><textarea name="text" cols="35" rows="5"
-						onFocus="changeColorById('text','yellow')"
-						onBlur="changeColorById('text','white')"><%= articleBean.getText() %></textarea>
+				<td><textarea name="text" cols="35" rows="5"><%= articleBean.getText() %></textarea>
 				</td>
-			
+				
 			<tr>
 				<td class="itemName">文字色</td>
 				<td>
-					<% if (colorList != null) {
-                        for (ColorMasterBean color : colorList) {
-                            String checkedAttribute = color.getColorId().equals(selectedColorId) ? " checked" : ""; %>
-                            <input class="radio" type="radio" name="color" value="<%= color.getColorId() %>" id="color_<%= color.getColorId() %>" <%= checkedAttribute %> >
-                            <label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;"><%= color.getColorName() %></label>
-                        <% }
-                    } %>
+					<% for (ColorMasterBean color : colors) { %>
+					<input type="radio" name="colorCode" value="<%= color.getColorCode() %>"
+                         onclick="changeColor('<%= color.getColorCode() %>')"
+                         <%= color.getColorCode().equals(articleBean.getColorId()) ? "checked" : "" %> >
+                     <%= color.getColorName() %>
+				    <% } %>
 				</td>
 			</tr>
 			
@@ -127,7 +125,5 @@
 			</td>
 		</tr>
 	</table>
-	<script type="text/javascript" src="css/fix.js"></script>
-
 </body>
 </html>
