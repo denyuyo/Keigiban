@@ -9,7 +9,16 @@ public class ArticleBean {
 	private String title;
 	private String text;
 	private String colorId;
+	private String colorCode;
 	
+	public String getColorCode() {
+		return colorCode;
+	}
+
+	public void setColorCode(String colorCode) {
+		this.colorCode = colorCode;
+	}
+
 	public ArticleBean()  {
 		title = "";
 		text = "";

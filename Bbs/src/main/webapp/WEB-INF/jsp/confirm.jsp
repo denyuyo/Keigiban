@@ -29,26 +29,24 @@
 				<tr>
 					<td class="itemName">名前</td>
 					<!-- getAttribute=sessionにセットされた値を取得 -->
-					<td style="color: <%  %>>;"><%= articleBean.getName() %></td>
+					<td style="color: #<%= articleBean.getColorCode() %>"><%= articleBean.getName() %></td>
 				</tr>
 				<tr>
 					<td class="itemName">E-mail</td>
-					<td  style="color: #ff9900;"><%= articleBean.getEmail() %></td>
+					<td  style="color: #<%= articleBean.getColorCode() %>>;"><%= articleBean.getEmail() %></td>
 				</tr>
 				<tr>
 					<td class="itemName">タイトル</td>
 					<!-- getParameter=ユーザーがform等に入力した値を取得 -->
-					<td  style="color: #ff9900;"><%= request.getParameter("title") %></td>
+					<td  style="color: #<%= articleBean.getColorCode() %>>;"><%= articleBean.getTitle() %></td>
 				</tr>
 				<tr>
 					<td class="itemName">本文</td>
-					<td  style="color: #ff9900;"><%= request.getParameter("text") %></td>
+					<td style="color: #<%= articleBean.getColorCode() %>>;"><%= articleBean.getText() %></td>
 				</tr>
 			</table>
 			<input class="button" type="submit" name="Submit" value="投稿">
-		</form>
-		<form action="/Bbs/InputServlet" method="post">
-			<input class="button" type="submit" name="Back" value="戻る">
+			<input class="button" type="submit" name="action" value="戻る">
 		</form>
 	</div>
 	<script type="text/javascript" src="css/master.js"></script>

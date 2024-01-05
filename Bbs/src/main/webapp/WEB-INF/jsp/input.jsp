@@ -33,11 +33,12 @@
 </head>
 <body>
 	<header> 掲示板 </header>
-	<form action="/Bbs/ConfirmServlet" method="post" id="form">
+	
+	<form action="/Bbs/InputServlet" method="post" id="form">
 		<table class="inputArticle">
 			<tr>
 				<td class=itemName id="name">名前</td>
-				<td><input type="text" name="username" value="<%= articleBean.getName() %>"></td>
+				<td><input type="text" name="name" value="<%= articleBean.getName() %>"></td>
 			</tr>
 			<tr>
 				<td class="itemName" id="email">E-mail</td>
@@ -53,21 +54,21 @@
 				</td>
 				
 			<tr>
-				<td class="itemName">文字色</td>
+				<td class="itemName" id="color">文字色</td>
 				<td>
 					<% for (ColorMasterBean color : colors) { %>
 					<input type="radio" name="colorCode" value="<%= color.getColorCode() %>"
-                         onclick="changeColor('<%= color.getColorCode() %>')"
-                         <%= color.getColorCode().equals(articleBean.getColorId()) ? "checked" : "" %> >
-                     <%= color.getColorName() %>
+						onclick="changeColor('<%= color.getColorCode() %>')"
+						<%= "3".equals(color.getColorId()) ? "checked" : "" %> >
+					<label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;">
+						<%= color.getColorName() %>
+					</label>
 				    <% } %>
 				</td>
 			</tr>
 			
 		</table>
 		<input class="button" type="submit" name="Submit" value="確認">
-	</form>
-	<form action="/Bbs/InputServlet" method="post" id="clearForm">
 		<input class="button" type="submit" name="clear" value="クリア">
 	</form>
 	<hr>
