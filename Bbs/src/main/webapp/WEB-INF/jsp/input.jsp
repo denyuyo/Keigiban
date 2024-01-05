@@ -24,7 +24,7 @@
 <title>記事入力画面</title>
 <script>
     function changeColor(colorCode) {
-        var elements = document.querySelectorAll('.inputArticle td input');
+        var elements = document.querySelectorAll('.inputArticle td input, .inputArticle td textarea');
         for (var i = 0; i < elements.length; i++) {
             elements[i].style.color = '#' + colorCode;
         }
