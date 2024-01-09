@@ -30,7 +30,10 @@ public class CompleteServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// compleate.jspのURLを取得
+
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html;charset=UTF-8");
+		
 		String resultPage = PropertyLoader.getProperty("url.jsp.complete");
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);

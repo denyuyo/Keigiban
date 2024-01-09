@@ -55,3 +55,71 @@ header {
 .button:hover {
     background-color: #ff509e;
 }
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif; /* デジタルなフォント */
+    background-color: #0a0f23; /* 暗い背景色 */
+    color: #d1f7ff; /* ネオンのような明るい文字色 */
+}
+
+header {
+    background-color: #112244;
+    color: #0ff0b3; /* ネオングリーン */
+    text-align: center;
+    padding: 10px 0;
+    font-size: 2rem;
+}
+
+.main-content {
+    margin: 50px auto; /* 中央に配置 */
+    width: 60%; /* 横幅を60%に設定 */
+    background-color: #192a56;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #0ff0b3; /* ネオンの輝き */
+    max-width: 600px; /* 最大横幅を設定 */
+}
+
+table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+td.itemName {
+    color: #ff007b; /* ピンクのネオンカラー */
+    font-weight: bold;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #0ff0b3;
+}
+
+input[type="text"], input[type="email"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #1c1f2a;
+    color: #d1f7ff;
+}
+
+input.button {
+    display: block; /* ブロック要素として表示 */
+    width: 90%;
+    padding: 10px;
+    margin: 10px auto; /* 上下のマージンと自動的な左右のマージンで中央配置 */
+    background-color: #0ff0b3; /* ネオングリーン */
+    color: #0a0f23;
+    border: none; /* 境界線なし */
+    border-radius: 4px; /* 角の丸み */
+    cursor: pointer; /* カーソルをポインターに */
+    transition: background-color 0.3s; /* 背景色の変化にかかる時間 */
+}
+
+input.button:hover {
+    background-color: #14c8d4;
+}
