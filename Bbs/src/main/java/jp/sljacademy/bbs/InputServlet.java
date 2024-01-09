@@ -119,7 +119,7 @@ public class InputServlet extends HttpServlet {
 		} else {
 			
 			// 記事のフィールドのバリデーションを実行
-			String validationErrors = CommonFunction.validateArticle(articleBean);
+			String validationErrors = CommonFunction.validateInput(articleBean);
 			
 			// バリデーションエラーがある場合はエラーメッセージをセットし、入力フォームに戻る
 			if(!validationErrors.isEmpty()) {
@@ -129,7 +129,7 @@ public class InputServlet extends HttpServlet {
 			}
 			
 			// Eメールの形式をバリデーション
-			if (!CommonFunction.isValidEmail(articleBean.getEmail())) {
+			if (!CommonFunction.checkEmail(articleBean.getEmail())) {
 				request.setAttribute("emailError", "不正なEメールアドレス形式です。");
 				request.getRequestDispatcher(resultPage).forward(request, response);
 				return;
