@@ -1,42 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+@charset "UTF-8";@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
 
 body {
+    margin: 0;
+    padding: 0;
     font-family: 'Orbitron', sans-serif;
-    background: #0d0c1d; /* 濃紺の背景 */
-    color: #c0c0c0; /* シルバーの文字色 */
+    background-color: #0a0a0a; /* 暗い背景色 */
+    color: #00ff00; /* 明るい緑色のテキスト */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
-    padding: 0;
+    background-image: url('path/to/your/futuristic-background.jpg'); /* サイバーパンク風の背景画像 */
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+header {
+    width: 100%;
+    text-align: center;
+    font-size: 2em;
+    padding: 20px 0;
+    background-color: #121212; /* ヘッダーの暗い背景色 */
+    color: #0d0; /* ヘッダーの文字色 */
+}
+
+.main-content {
+    width: 50%;
+    background-color: rgba(0, 0, 0, 0.8); /* 半透明の黒背景 */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #0f0; /* 緑色のボックスシャドウ */
     text-align: center;
 }
 
-h1 {
-    font-size: 2em;
-    color: #00ff00; /* ネオングリーン */
-    margin-bottom: 20px;
-}
-
-p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-}
-
 .button {
-    background-color: #ff2079; /* ネオンピンク */
-    color: white;
-    border: none;
+    display: inline-block;
     padding: 10px 20px;
     margin: 10px;
-    cursor: pointer;
+    border: none;
     border-radius: 5px;
-    font-size: 1em;
+    background-color: #006600; /* ボタンの背景色 */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .button:hover {
-    background-color: #ff509e;
+    background-color: #009900; /* ホバー時の背景色変更 */
 }
 
 body {
