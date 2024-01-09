@@ -118,22 +118,6 @@ public class InputServlet extends HttpServlet {
 			
 		} else {
 			
-			// 記事のフィールドのバリデーションを実行
-			String validationErrors = CommonFunction.validateInput(articleBean);
-			
-			// バリデーションエラーがある場合はエラーメッセージをセットし、入力フォームに戻る
-			if(!validationErrors.isEmpty()) {
-				request.setAttribute("errors", validationErrors);
-				request.getRequestDispatcher(resultPage).forward(request, response);
-				return;
-			}
-			
-			// Eメールの形式をバリデーション
-			if (!CommonFunction.checkEmail(articleBean.getEmail())) {
-				request.setAttribute("emailError", "不正なEメールアドレス形式です。");
-				request.getRequestDispatcher(resultPage).forward(request, response);
-				return;
-			}
 			// JNDIを使用してDataSourceを取得
 			try {
 				// 色情報を取得
@@ -155,6 +139,25 @@ public class InputServlet extends HttpServlet {
 			articleBean.setTitle(request.getParameter("title"));
 			articleBean.setText(request.getParameter("text"));
 			articleBean.setColorId(request.getParameter("color"));
+			
+			// CommonFunctionを用いてバリデーションを行う
+			String  validationErrors = CommonFunction.validateInput(articleBean);
+			
+			if (!validationErrors.isEmpty()) {
+				// バリデーションエラーがあればリクエストにセットして入力画面に戻る
+				request.setAttribute("validationErrors", validationErrors);
+				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+				dispatcher.forward(request, response);
+				return;
+			}
+			
+			if (!CommonFunction.checkEmail(articleBean.getEmail())) {
+				// Eメールの形式が不正であればエラーメッセージをリクエストにセット
+				request.setAttribute("emailError", "不正なEメールアドレス形式です。");
+				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+				dispatcher.forward(request, response);
+				return;
+			}
 			
 			
 			//入力情報をセッションに再設定

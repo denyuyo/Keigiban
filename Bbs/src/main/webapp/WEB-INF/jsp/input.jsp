@@ -38,6 +38,9 @@
 	
 	<form action="/Bbs/InputServlet" method="post" id="form">
 		<table class="inputArticle">
+		<% if (request.getAttribute("validationErrors") != null) { %>
+			<p class="error"><%= request.getAttribute("validationErrors") %></p>
+		<% } %>
 			<tr>
 				<td class=itemName id="name">名前</td>
 				<td><input type="text" name="name" value="<%= articleBean.getName() %>"></td>

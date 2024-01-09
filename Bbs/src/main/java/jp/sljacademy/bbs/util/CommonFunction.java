@@ -3,6 +3,8 @@ package jp.sljacademy.bbs.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jp.sljacademy.bbs.bean.ArticleBean;
+
 // 項目制限
 
 public class CommonFunction {
@@ -30,24 +32,24 @@ public class CommonFunction {
 	}
 	
 	// 入力バリデーションを行うメソッド
-	public static String validateInput(String name, String email, String title, String text) {
+	public static String validateInput(ArticleBean article) {
 		StringBuilder errors = new StringBuilder();
 		
 		// 名前の長さチェック
-		if (!checkLen(name, 30)) {
+		if (!checkLen(article.getName(), 30)) {
 			errors.append("名前は30文字以内で入力してください。\n");
 		}
 		
 		// Eメールの形式と長さチェック
-		if (!checkEmail(email) || !checkLen(email, 30)) {
+		if (!checkEmail(article.getEmail()) || !checkLen(article.getEmail(), 30)) {
 			errors.append("正しいEメールアドレスを30文字以内で入力してください。\n");
 		}
 		// タイトルの長さチェック（タイトルは空でも可）
-		if (isNotBlank(title) && !checkLen(title, 50)) {
+		if (isNotBlank(article.getTitle()) && !checkLen(article.getTitle(), 50)) {
 			errors.append("タイトルは50文字以内で入力してください。\n");
 		}
 		// 本文の長さチェック
-		if (!checkLen(text, 100)) {
+		if (!checkLen(article.getText(), 100)) {
 			errors.append("本文は100文字以内で入力してください。\n");
 		}
 		return errors.toString();
