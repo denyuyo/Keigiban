@@ -20,8 +20,7 @@ public class AccountDao {
 	
 	public AccountDao() throws NamingException {
 		InitialContext context = new InitialContext();
-		source = (DataSource)
-			context.lookup("java:comp/env/jdbc/datasource");
+		source = (DataSource)context.lookup("java:comp/env/jdbc/datasource");
 	}
 	
 	public AccountBean getAccount(String id, String password) throws SQLException {
