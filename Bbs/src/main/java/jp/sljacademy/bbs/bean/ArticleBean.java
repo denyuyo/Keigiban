@@ -1,15 +1,42 @@
 package jp.sljacademy.bbs.bean;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 // 記事
 
 public class ArticleBean {
 	
+	private int articleId;
+	private Date createDate;
 	private String name;
 	private String email;
 	private String title;
 	private String text;
 	private String colorId;
 	private String colorCode;
+	
+	public int getArticleId() {
+		return articleId;
+	}
+
+	public void setArticleId(int articleId) {
+		this.articleId = articleId;
+	}
+	
+	public String getCreateDateView() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分");
+		return sdf.format(createDate);
+	}
+	
+	
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 	
 	public String getColorCode() {
 		return colorCode;

@@ -51,7 +51,7 @@ public class ColorMasterDao {
 		return colors;
 	}
 	
-public String getColorCode(String colorId) throws SQLException {
+	public String getColorCode(String colorId) throws SQLException {
 		
 		Connection connection = source.getConnection();
 		String color = "";

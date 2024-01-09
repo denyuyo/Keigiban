@@ -16,7 +16,9 @@ import javax.servlet.http.HttpSession;
 
 import jp.sljacademy.bbs.bean.ArticleBean;
 import jp.sljacademy.bbs.bean.ColorMasterBean;
+import jp.sljacademy.bbs.dao.ArticleDao;
 import jp.sljacademy.bbs.dao.ColorMasterDao;
+import jp.sljacademy.bbs.util.CommonFunction;
 import jp.sljacademy.bbs.util.PropertyLoader;
 
 /**
@@ -45,12 +47,16 @@ public class InputServlet extends HttpServlet {
 		// セッションが存在し、ユーザーIDがセッションにセットされているかを確認
 		if (session != null && session.getAttribute("id") != null) {
 			try {
-				ColorMasterDao colorDao = new ColorMasterDao();
+		        ArticleDao dao = new ArticleDao();
+		        List<ArticleBean> articles = dao.getAllArticles();
+		        request.setAttribute("articles", articles);
+		        
+		        ColorMasterDao colorDao = new ColorMasterDao();
 				List<ColorMasterBean> colors = colorDao.getAllColors();
 				request.setAttribute("colors", colors);
-			} catch (NamingException | SQLException e) {
-				throw new ServletException("Database error", e);
-			}
+		    } catch (NamingException | SQLException e) {
+		        throw new ServletException("Database error", e);
+		    }
 			
 			// 設定したJSPページにリクエストを転送
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
@@ -60,6 +66,7 @@ public class InputServlet extends HttpServlet {
 			resultPage = PropertyLoader.getProperty("url.bbs.index");
 			response.sendRedirect(resultPage);
 		}
+		
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -110,6 +117,23 @@ public class InputServlet extends HttpServlet {
 			return;
 			
 		} else {
+			
+			// 記事のフィールドのバリデーションを実行
+			String validationErrors = CommonFunction.validateArticle(articleBean);
+			
+			// バリデーションエラーがある場合はエラーメッセージをセットし、入力フォームに戻る
+			if(!validationErrors.isEmpty()) {
+				request.setAttribute("errors", validationErrors);
+				request.getRequestDispatcher(resultPage).forward(request, response);
+				return;
+			}
+			
+			// Eメールの形式をバリデーション
+			if (!CommonFunction.isValidEmail(articleBean.getEmail())) {
+				request.setAttribute("emailError", "不正なEメールアドレス形式です。");
+				request.getRequestDispatcher(resultPage).forward(request, response);
+				return;
+			}
 			// JNDIを使用してDataSourceを取得
 			try {
 				// 色情報を取得
@@ -117,16 +141,21 @@ public class InputServlet extends HttpServlet {
 				List<ColorMasterBean> colors = colorDao.getAllColors();
 				// request=一画面分やり取りしたら終わり（ユーザからサーバに処理が行って帰ってくる）
 				request.setAttribute("colors", colors);
+				
+				 ArticleDao dao = new ArticleDao();
+				 List<ArticleBean> articles = dao.getAllArticles();
+				 request.setAttribute("articles", articles);
 			} catch (Exception e) {
 				throw new ServletException("Database error", e);
 			}
-		
+					
 			// 残りの記事情報をセット
 			articleBean.setName(request.getParameter("name"));
 			articleBean.setEmail(request.getParameter("email"));
 			articleBean.setTitle(request.getParameter("title"));
 			articleBean.setText(request.getParameter("text"));
 			articleBean.setColorId(request.getParameter("color"));
+			
 			
 			//入力情報をセッションに再設定
 			session.setAttribute("ArticleBean", articleBean);

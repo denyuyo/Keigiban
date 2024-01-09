@@ -24,7 +24,7 @@
 	</header>
 	<div class="main-content">
 		<p>以下の内容で投稿します。</p>
-		<form action="/Bbs/CompleteServlet" method="post">
+		<form action="/Bbs/ConfirmServlet" method="post">
 			<table class="inputArticle">
 				<tr>
 					<td class="itemName">名前</td>
@@ -33,20 +33,20 @@
 				</tr>
 				<tr>
 					<td class="itemName">E-mail</td>
-					<td  style="color: #<%= articleBean.getColorCode() %>>;"><%= articleBean.getEmail() %></td>
+					<td  style="color: #<%= articleBean.getColorCode() %>"><%= articleBean.getEmail() %></td>
 				</tr>
 				<tr>
 					<td class="itemName">タイトル</td>
 					<!-- getParameter=ユーザーがform等に入力した値を取得 -->
-					<td  style="color: #<%= articleBean.getColorCode() %>>;"><%= articleBean.getTitle() %></td>
+					<td  style="color: #<%= articleBean.getColorCode() %>"><%= articleBean.getTitle() %></td>
 				</tr>
 				<tr>
 					<td class="itemName">本文</td>
-					<td style="color: #<%= articleBean.getColorCode() %>>;"><%= articleBean.getText() %></td>
+					<td style="color: #<%= articleBean.getColorCode() %>"><%= articleBean.getText() %></td>
 				</tr>
 			</table>
+			<input class="button" type="submit" name="Back" value="戻る">
 			<input class="button" type="submit" name="Submit" value="投稿">
-			<input class="button" type="submit" name="action" value="戻る">
 		</form>
 	</div>
 	<script type="text/javascript" src="css/master.js"></script>

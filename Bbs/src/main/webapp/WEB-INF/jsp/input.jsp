@@ -2,7 +2,9 @@
 	pageEncoding="UTF-8"
    	import="jp.sljacademy.bbs.bean.ArticleBean"
    	import="java.util.List"
+   	import="java.util.Date"
 	import="jp.sljacademy.bbs.bean.ColorMasterBean"
+	import="java.text.SimpleDateFormat"
 %>
 <%
 	// キャッシュの無効化
@@ -20,7 +22,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="css/input.css" type="text/css">
+<link rel="stylesheet" href="css/master.css" type="text/css">
 <title>記事入力画面</title>
 <script>
     function changeColor(colorCode) {
@@ -57,7 +59,7 @@
 				<td class="itemName" id="color">文字色</td>
 				<td>
 					<% for (ColorMasterBean color : colors) { %>
-					<input type="radio" name="colorCode" value="<%= color.getColorCode() %>"
+					<input class="radio" type="radio" name="color" value="<%= color.getColorId() %>"
 						onclick="changeColor('<%= color.getColorCode() %>')"
 						<%= "3".equals(color.getColorId()) ? "checked" : "" %> >
 					<label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;">
@@ -72,59 +74,30 @@
 		<input class="button" type="submit" name="clear" value="クリア">
 	</form>
 	<hr>
-	<table class="postedArticle">
+	<%-- 記事情報のリストをリクエストスコープから取得 --%>
+	<% 
+		List<ArticleBean> articles = (List<ArticleBean>) request.getAttribute("articles");
+		if (articles != null && !articles.isEmpty()) {
+			for (ArticleBean article : articles) {
+	%>
+	<table class="postedArticle"  style="color: #<%= article.getColorCode() %>">
 		<tr>
-			<td class="articleId">4</td>
-			<td class="articleTitle">テストタイトル４</td>
+			<td><%= article.getArticleId() %></td>
+			<td><%= article.getTitle() != null ? article.getTitle() : "（no title）" %></td>
 		</tr>
 		<tr>
-			<td class="articleText" colspan="2">テスト本文４</td>
+			<td><%= article.getText() %></td>
 		</tr>
 		<tr>
-			<td class="articleDate" colspan="2">2007年 4月 4日 12時00分&emsp;
-				nobody</td>
+			<td><%= article.getCreateDateView() %></td>
+			<td>
+				<a href="mailto:<%= article.getEmail() %>"><%= article.getName() != null ? article.getName() : "nobody" %></a>
+			</td>		
 		</tr>
-	</table>
-	<table class="postedArticle" style="color: #ff9900">
-		<tr>
-			<td class="articleId">3</td>
-			<td class="articleTitle">テストタイトル３</td>
-		</tr>
-		<tr>
-			<td class="articleText" colspan="2">テスト本文３</td>
-		</tr>
-		<tr>
-			<td class="articleDate" colspan="2">2007年 4月 2日 15時30分&emsp; <a
-				href="mailto:test3@test.co.jp">テスト3</a>
-			</td>
-		</tr>
-	</table>
-	<table class="postedArticle" style="color: blue;">
-		<tr>
-			<td class="articleId">2</td>
-			<td class="articleTitle">(no title)</td>
-		</tr>
-		<tr>
-			<td class="articleText" colspan="2">テスト本文２</td>
-		</tr>
-		<tr>
-			<td class="articleDate" colspan="2">2007年 4月 2日 10時00分&emsp;
-				テスト2</td>
-		</tr>
-	</table>
-	<table class="postedArticle">
-		<tr>
-			<td class="articleId">1</td>
-			<td class="articleTitle">テストタイトル１</td>
-		</tr>
-		<tr>
-			<td class="articleText" colspan="2">テスト本文１</td>
-		</tr>
-		<tr>
-			<td class="articleDate" colspan="2">2007年 4月 1日 00時00分&emsp; <a
-				href="mailto:test1@test.co.jp">テスト1</a>
-			</td>
-		</tr>
+		<%
+			}
+		}
+		%>
 	</table>
 </body>
 </html>

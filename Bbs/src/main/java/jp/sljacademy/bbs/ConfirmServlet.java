@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import jp.sljacademy.bbs.bean.ArticleBean;
 import jp.sljacademy.bbs.dao.ArticleDao;
+import jp.sljacademy.bbs.dao.ColorMasterDao;
 import jp.sljacademy.bbs.util.PropertyLoader;
 
 /**
@@ -38,7 +39,6 @@ public class ConfirmServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html;charset=UTF-8");
 		
 		String resultPage = PropertyLoader.getProperty("url.jsp.confirm");
 		
@@ -48,8 +48,19 @@ public class ConfirmServlet extends HttpServlet {
 		// セッションからArticleBeanを取得
 		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 		
-		// 入力フォームの値をArticleBeanにセット
-		articleBean.setColorCode(request.getParameter("colorcode"));
+		// ユーザが選択したcolorIdを取得
+		String colorId = articleBean.getColorId();
+		
+		//colorIdからcolorcodeを取得
+		try {
+			ColorMasterDao colorDao = new ColorMasterDao();
+			String colorCode = colorDao.getColorCode(colorId);
+			// colorCodeをArticleBeanにセット
+			articleBean.setColorCode(colorCode);
+		} catch(NamingException | SQLException e) {
+			throw new ServletException("Database error", e);
+			
+		}
 		
 		//入力情報をセッションに再設定
 		session.setAttribute("ArticleBean", articleBean);
@@ -68,9 +79,6 @@ public class ConfirmServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		
-		// フォームから送信されたアクションを取得
-		String action = request.getParameter("action");
-		
 		// セッションを取得
 		HttpSession session = request.getSession();
 				
@@ -84,7 +92,7 @@ public class ConfirmServlet extends HttpServlet {
 		 request.setCharacterEncoding("UTF-8");
 		    response.setContentType("text/html;charset=UTF-8");
 		    
-		    if ("投稿".equals(action)) {
+		    if (request.getParameter("Submit") != null) {
 		        session = request.getSession(false);
 		        ArticleBean article = (ArticleBean) session.getAttribute("ArticleBean");
 		        
@@ -99,24 +107,8 @@ public class ConfirmServlet extends HttpServlet {
 		            }
 		            response.sendRedirect(PropertyLoader.getProperty("url.bbs.complete"));
 		        }
-		    } else if ("戻る".equals(action)) {
-		        session = request.getSession();
-		        articleBean = (ArticleBean) session.getAttribute("ArticleBean");
-
-		        if (articleBean == null) {
-		            articleBean = new ArticleBean();
-		            session.setAttribute("ArticleBean", articleBean);
-		        }
-
-		        // 入力フォームの値をArticleBeanにセット
-		        articleBean.setTitle(request.getParameter("title"));
-		        articleBean.setText(request.getParameter("text"));
-		        articleBean.setColorId(request.getParameter("colorcode"));
-		        
-		        //入力情報をセッションに再設定
-				session.setAttribute("ArticleBean", articleBean);
-				
-				String resultPage = PropertyLoader.getProperty("url.bbs.confirm");
+		    } else if (request.getParameter("Back") != null) {
+				String resultPage = PropertyLoader.getProperty("url.bbs.input");
 		        response.sendRedirect(resultPage);
 		    }
 	}

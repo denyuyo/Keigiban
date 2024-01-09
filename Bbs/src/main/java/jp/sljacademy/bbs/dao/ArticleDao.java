@@ -26,7 +26,7 @@ public class ArticleDao {
 	
 	public void createArticle(ArticleBean article) throws SQLException {
 		Connection connection = source.getConnection();
-		String sql = "INSERT INTO articles (name, email, title, text, color) VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO article (article_id, create_date, name, email, title, text, color_id) VALUES (?, NOW(), ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, article.getName());
@@ -51,17 +51,20 @@ public class ArticleDao {
 	public List<ArticleBean> getAllArticles() throws SQLException {
 		Connection connection = source.getConnection();
 		List<ArticleBean> articles = new ArrayList<>();
-		String sql = "SELECT name, email, title, text, color FROM articles";
+		String sql = "SELECT article.*, COLOR_MASTER.COLOR_CODE FROM article JOIN COLOR_MASTER ON article.color_id = COLOR_MASTER.COLOR_ID;";
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			ResultSet resultSet = statement.executeQuery(); 
 			while (resultSet.next()) {
 				ArticleBean article = new ArticleBean();
+				article.setArticleId(resultSet.getInt("article_id"));
+				article.setCreateDate(resultSet.getTimestamp("create_date"));
 				article.setName(resultSet.getString("name"));
 				article.setEmail(resultSet.getString("email"));
 				article.setTitle(resultSet.getString("title"));
 				article.setText(resultSet.getString("text"));
-				article.setColorId(resultSet.getString("color"));
+				article.setColorId(resultSet.getString("color_id"));
+				article.setColorCode(resultSet.getString("color_code"));
 				articles.add(article);
 			}
 			// ステートメントを閉じる
