@@ -7,7 +7,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import jp.sljacademy.bbs.bean.ArticleBean;
 import jp.sljacademy.bbs.util.PropertyLoader;
 
 /**
@@ -46,8 +48,21 @@ public class CompleteServlet extends HttpServlet {
 			throws ServletException, IOException {
 		// "Back" ボタンが押されたかどうかをチェック
 		if(request.getParameter("Back") != null) {
+			
+			// セッションからArticleBeanオブジェクトを取得
+			HttpSession session = request.getSession();
+			ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");	
+			
+			if (articleBean != null) {
+				// titleとtextを空白に設定
+				articleBean.setTitle("");
+				articleBean.setText("");	
+				
+				// 更新したArticleBeanをセッションに再設定
+				session.setAttribute("ArticleBean", articleBean);
+			}
 			String resultPage = PropertyLoader.getProperty("url.bbs.input");
-	        response.sendRedirect(resultPage);
+			response.sendRedirect(resultPage);
 		}
 	}
 }

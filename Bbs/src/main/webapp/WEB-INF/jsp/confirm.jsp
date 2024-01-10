@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"
-    import="jp.sljacademy.bbs.bean.ArticleBean" %>
+    import="jp.sljacademy.bbs.bean.ArticleBean"
+    import="jp.sljacademy.bbs.util.CommonFunction" %>
 <%
 	// キャッシュの無効化
 	response.setHeader("pragma", "no-cache");
@@ -23,25 +24,24 @@
 	</header>
 	<div class="main-content">
 		<p>以下の内容で投稿します。</p>
-		<form action="/Bbs/ConfirmServlet" method="post">
+		<form action="/Bbs/ConfirmServlet" method="post"  style="color: #<%= articleBean.getColorCode() %>">
 			<table class="inputArticle">
 				<tr>
 					<td class="itemName">名前</td>
-					<!-- getAttribute=sessionにセットされた値を取得 -->
-					<td style="color: #<%= articleBean.getColorCode() %>"><%= articleBean.getName() %></td>
+					<!-- getParameter=ユーザーがform等に入力した値を取得 -->
+					<td><%= CommonFunction.getDefaultName(articleBean.getName()) %></td>
 				</tr>
 				<tr>
 					<td class="itemName">E-mail</td>
-					<td  style="color: #<%= articleBean.getColorCode() %>"><%= articleBean.getEmail() %></td>
+					<td><%= articleBean.getEmail() %></td>
 				</tr>
 				<tr>
 					<td class="itemName">タイトル</td>
-					<!-- getParameter=ユーザーがform等に入力した値を取得 -->
-					<td  style="color: #<%= articleBean.getColorCode() %>"><%= articleBean.getTitle() %></td>
+					<td><%= CommonFunction.getDefaultTitle(articleBean.getTitle()) %></td>
 				</tr>
 				<tr>
 					<td class="itemName">本文</td>
-					<td style="color: #<%= articleBean.getColorCode() %>"><%= articleBean.getText() %></td>
+					<td><%= CommonFunction.convertLineBreaksToHtml(articleBean.getText()) %></td>
 				</tr>
 			</table>
 			<input class="button" type="submit" name="Back" value="戻る">

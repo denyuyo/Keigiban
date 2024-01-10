@@ -82,34 +82,36 @@ public class ConfirmServlet extends HttpServlet {
 		// セッションを取得
 		HttpSession session = request.getSession();
 				
-		// セッションからArticleBeanを取得（なければ新しく作成）
+		// セッションからArticleBeanオブジェクトを取得（存在しない場合は新規作成）
 		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 		if (articleBean == null) {
 			articleBean = new ArticleBean();
 			session.setAttribute("ArticleBean", articleBean);
 		}
-		
-		 request.setCharacterEncoding("UTF-8");
-		 response.setContentType("text/html;charset=UTF-8");
 		 
+		// ユーザーが「送信」ボタンを押した場合（Submit）
 		 if (request.getParameter("Submit") != null) {
 			 session = request.getSession(false);
 			 ArticleBean article = (ArticleBean) session.getAttribute("ArticleBean");
 			 
+			 //　データベースに記事情報を保存する
 			 if (article != null) {
 				 try {
 					ArticleDao dao = new ArticleDao();
 					dao.createArticle(article);
-					session.removeAttribute("ArticleBean");
+					session.setAttribute("ArticleBean", articleBean);
 				 } catch (NamingException | SQLException e) {
 					 e.printStackTrace();
 					 throw new ServletException("Database error during article creation", e);
 				}
-				 	response.sendRedirect(PropertyLoader.getProperty("url.bbs.complete"));
+				// 記事が作成できたら、CompleteServletに案内する
+				 response.sendRedirect(PropertyLoader.getProperty("url.bbs.complete"));
 			}
 		} else if (request.getParameter("Back") != null) {
-				 String resultPage = PropertyLoader.getProperty("url.bbs.input");
-				 response.sendRedirect(resultPage);
+			// 「戻る」ボタンを押した場合
+	        // InputServletに案内する
+			String resultPage = PropertyLoader.getProperty("url.bbs.input");
+			response.sendRedirect(resultPage);
 		}
 	}
 }

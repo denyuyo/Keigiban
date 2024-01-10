@@ -69,20 +69,20 @@ public class IndexServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String resultPage = PropertyLoader.getProperty("url.jsp.index");
+		String resultPage = PropertyLoader.getProperty("url.bbs.input");
 		
 		HttpSession session = request.getSession(false);
 		
-		// セッションが存在し、かつログイン状態の場合に一覧画面に遷移
+		// セッションが存在し、かつログイン状態の場合に一覧画面にリダイレクト
+		// sendRedirect：クライアントに新しいURLに移動するよう指示。URLが変わる
 		if (session != null && session.getAttribute("id") != null) {
-			resultPage = PropertyLoader.getProperty("url.bbs.input");
 			response.sendRedirect(resultPage);
 			return;
 		} 
-		// ログインしていない場合はログイン画面にリダイレクト
+		// ログインしていない場合はログイン画面にフォワード
+		// forward：リクエストを別のサーブレットやJSPに渡す
 		resultPage = PropertyLoader.getProperty("url.jsp.index");
 		request.getRequestDispatcher(resultPage).forward(request, response);
-		return;
 	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
@@ -93,6 +93,7 @@ public class IndexServlet extends HttpServlet {
 		
 		String resultPage = PropertyLoader.getProperty("url.jsp.index");
 		
+		// フォームから送信されたユーザーIDとパスワードを取得
 		String id = request.getParameter("id");
 		String password = request.getParameter("password");
 		
@@ -106,8 +107,8 @@ public class IndexServlet extends HttpServlet {
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 			dispatcher.forward(request, response);
 			return;
-		// エラーがない場合 
 		}
+		// エラーがない場合 
 		HttpSession session = request.getSession(true);
 		try {
 			AccountDao dao = new AccountDao();
@@ -131,9 +132,7 @@ public class IndexServlet extends HttpServlet {
 			// ログイン☑
 			session.setAttribute("id", id);
 				
-		} catch (NamingException e) { 
-			request.setAttribute("errorMessage", e.getMessage());
-		} catch (SQLException e) { 
+		} catch (NamingException | SQLException e) { 
 			request.setAttribute("errorMessage", e.getMessage());
 		}
 		resultPage = PropertyLoader.getProperty("url.bbs.input");

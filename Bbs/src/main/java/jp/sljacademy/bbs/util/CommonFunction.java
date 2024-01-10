@@ -53,5 +53,24 @@ public class CommonFunction {
 			errors.append("本文は100文字以内で入力してください。\n");
 		}
 		return errors.toString();
+	}
+	
+	// テキスト内の改行をHTMLの <br> タグに変換するメソッド
+	public static String convertLineBreaksToHtml(String text) {
+		if (text == null) {
+			return null;
 		}
+		return text.replace("\n", "<br>");
+	}
+	
+	// 名前が空の場合に "nobody" を返すメソッド
+	public static String getDefaultName(String name) {
+		// trim：文字列から前後の空白を除去
+		return (name == null || name.trim().isEmpty()) ? "nobody" : name;
+	}
+	
+	// タイトルが空の場合に "(no title)" を返すメソッド
+	public static String getDefaultTitle(String title) {
+		return (title == null || title.trim().isEmpty()) ? "(no title)" : title;
+	}
 }

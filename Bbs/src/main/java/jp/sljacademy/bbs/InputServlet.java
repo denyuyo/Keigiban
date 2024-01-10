@@ -47,16 +47,18 @@ public class InputServlet extends HttpServlet {
 		// セッションが存在し、ユーザーIDがセッションにセットされているかを確認
 		if (session != null && session.getAttribute("id") != null) {
 			try {
-		        ArticleDao dao = new ArticleDao();
-		        List<ArticleBean> articles = dao.getAllArticles();
-		        request.setAttribute("articles", articles);
-		        
-		        ColorMasterDao colorDao = new ColorMasterDao();
+				// 過去の記事データを取得
+				ArticleDao dao = new ArticleDao();
+				List<ArticleBean> articles = dao.getAllArticles();
+				request.setAttribute("articles", articles);
+				
+				// 色情報を取得
+				ColorMasterDao colorDao = new ColorMasterDao();
 				List<ColorMasterBean> colors = colorDao.getAllColors();
 				request.setAttribute("colors", colors);
-		    } catch (NamingException | SQLException e) {
-		        throw new ServletException("Database error", e);
-		    }
+			} catch (NamingException | SQLException e) {
+				throw new ServletException("Database error", e);
+			}
 			
 			// 設定したJSPページにリクエストを転送
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
@@ -98,10 +100,7 @@ public class InputServlet extends HttpServlet {
 			articleBean.setEmail("");
 			articleBean.setTitle("");
 			articleBean.setText("");
-			articleBean.setColorId("");
-			
-			// セッションスコープに更新したBeanをセット
-			session.setAttribute("ArticleBean", articleBean);
+			articleBean.setColorId("3");
 		
 			try {
 				// 色情報を取得
@@ -118,6 +117,8 @@ public class InputServlet extends HttpServlet {
 				throw new ServletException("Database error", e);
 			}
 			
+			// セッションスコープに更新したBeanをセット
+			session.setAttribute("ArticleBean", articleBean);
 			
 			// 同じページにフォワード
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
@@ -133,6 +134,21 @@ public class InputServlet extends HttpServlet {
 			articleBean.setText(request.getParameter("text"));
 			articleBean.setColorId(request.getParameter("color"));
 			
+			try {
+				// 色情報を取得
+				ColorMasterDao colorDao = new ColorMasterDao();
+				List<ColorMasterBean> colors = colorDao.getAllColors();
+				// request=一画面分やり取りしたら終わり（ユーザからサーバに処理が行って帰ってくる）
+				request.setAttribute("colors", colors);
+				
+				// 過去の記事データを取得
+				 ArticleDao dao = new ArticleDao();
+				 List<ArticleBean> articles = dao.getAllArticles();
+				 request.setAttribute("articles", articles);
+			} catch (NamingException | SQLException e) {
+				throw new ServletException("Database error", e);
+			}
+			
 			// CommonFunctionを用いてバリデーションエラーメッセージを初期化
 			String  validationErrors = CommonFunction.validateInput(articleBean);
 			
@@ -145,14 +161,14 @@ public class InputServlet extends HttpServlet {
 			}
 			
 			// 本文が空でないかチェック
-		    if (!CommonFunction.isNotBlank(articleBean.getText())) {
-		    	request.setAttribute("textError", "本文を入力してください。");
+			if (!CommonFunction.isNotBlank(articleBean.getText())) {
+				request.setAttribute("textError", "本文を入力してください。");
 				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 				dispatcher.forward(request, response);
 				return;
-		    }
-		    
-		    if (!validationErrors.isEmpty()) {
+			}
+			
+			if (!validationErrors.isEmpty()) {
 				// バリデーションエラーがあればリクエストにセットして入力画面に戻る
 				request.setAttribute("validationErrors", validationErrors);
 				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
