@@ -90,26 +90,26 @@ public class ConfirmServlet extends HttpServlet {
 		}
 		
 		 request.setCharacterEncoding("UTF-8");
-		    response.setContentType("text/html;charset=UTF-8");
-		    
-		    if (request.getParameter("Submit") != null) {
-		        session = request.getSession(false);
-		        ArticleBean article = (ArticleBean) session.getAttribute("ArticleBean");
-		        
-		        if (article != null) {
-		            try {
-		                ArticleDao dao = new ArticleDao();
-		                dao.createArticle(article);
-		                session.removeAttribute("ArticleBean");
-		            } catch (NamingException | SQLException e) {
-		                e.printStackTrace();
-		                throw new ServletException("Database error during article creation", e);
-		            }
-		            response.sendRedirect(PropertyLoader.getProperty("url.bbs.complete"));
-		        }
-		    } else if (request.getParameter("Back") != null) {
-				String resultPage = PropertyLoader.getProperty("url.bbs.input");
-		        response.sendRedirect(resultPage);
-		    }
+		 response.setContentType("text/html;charset=UTF-8");
+		 
+		 if (request.getParameter("Submit") != null) {
+			 session = request.getSession(false);
+			 ArticleBean article = (ArticleBean) session.getAttribute("ArticleBean");
+			 
+			 if (article != null) {
+				 try {
+					ArticleDao dao = new ArticleDao();
+					dao.createArticle(article);
+					session.removeAttribute("ArticleBean");
+				 } catch (NamingException | SQLException e) {
+					 e.printStackTrace();
+					 throw new ServletException("Database error during article creation", e);
+				}
+				 	response.sendRedirect(PropertyLoader.getProperty("url.bbs.complete"));
+			}
+		} else if (request.getParameter("Back") != null) {
+				 String resultPage = PropertyLoader.getProperty("url.bbs.input");
+				 response.sendRedirect(resultPage);
+		}
 	}
 }

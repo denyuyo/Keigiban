@@ -14,8 +14,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<link rel="stylesheet" href="css/confirm.css" type="text/css">
-	<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/master.css" type="text/css">
 	<title>掲示板</title>
 </head>
 <body>
@@ -49,6 +48,5 @@
 			<input class="button" type="submit" name="Submit" value="投稿">
 		</form>
 	</div>
-	<script type="text/javascript" src="css/master.js"></script>
 </body>
 </html>

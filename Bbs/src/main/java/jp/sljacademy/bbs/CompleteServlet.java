@@ -44,8 +44,10 @@ public class CompleteServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		// "Back" ボタンが押されたかどうかをチェック
+		if(request.getParameter("Back") != null) {
+			String resultPage = PropertyLoader.getProperty("url.bbs.input");
+	        response.sendRedirect(resultPage);
+		}
 	}
-
 }

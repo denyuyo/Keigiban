@@ -41,6 +41,12 @@
 		<% if (request.getAttribute("validationErrors") != null) { %>
 			<p class="error"><%= request.getAttribute("validationErrors") %></p>
 		<% } %>
+		<% if (request.getAttribute("textError") != null) { %>
+			<p class="error"><%= request.getAttribute("textError") %></p>
+		<% } %>
+		<% if (request.getAttribute("emailError") != null) { %>
+			<p class="error"><%= request.getAttribute("emailError") %></p>
+		<% } %>
 			<tr>
 				<td class=itemName id="name">名前</td>
 				<td><input type="text" name="name" value="<%= articleBean.getName() %>"></td>
@@ -64,7 +70,7 @@
 					<% for (ColorMasterBean color : colors) { %>
 					<input class="radio" type="radio" name="color" value="<%= color.getColorId() %>"
 						onclick="changeColor('<%= color.getColorCode() %>')"
-						<%= "3".equals(color.getColorId()) ? "checked" : "" %> >
+						<%= articleBean.getColorId().equals(color.getColorId()) ? "checked" : "" %> >
 					<label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;">
 						<%= color.getColorName() %>
 					</label>

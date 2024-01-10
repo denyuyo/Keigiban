@@ -16,6 +16,13 @@ public class ArticleBean {
 	private String colorId;
 	private String colorCode;
 	
+
+	public ArticleBean()  {
+		title = "";
+		text = "";
+		colorId = "3";
+	}
+	
 	public int getArticleId() {
 		return articleId;
 	}
@@ -46,10 +53,6 @@ public class ArticleBean {
 		this.colorCode = colorCode;
 	}
 
-	public ArticleBean()  {
-		title = "";
-		text = "";
-	}
 	
 	public String getColorId() {
 		return colorId;

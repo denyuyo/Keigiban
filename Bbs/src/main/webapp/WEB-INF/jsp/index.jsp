@@ -11,35 +11,34 @@
 <head>
     <meta charset="UTF-8">
     <title>ログイン画面</title>
-    <link rel="stylesheet" href="css/origin.css" type="text/css">
+    <link rel="stylesheet" href="css/master.css" type="text/css">
 </head>
 <body>
-    <header>掲示板へようこそ</header>
+    <header>掲示板</header>
     <div class="form-container">
         <!-- ログインの案内メッセージ -->
-        <p class="login-message">IDとパスワードを入力してログインしてください。</p>
+        <p class="login-message">あなたのIDとパスワードを入力してログインしてください。</p>
         
         <!-- エラーメッセージがあれば表示 -->
         <% String errorMessages = (String) request.getAttribute("errorMessages");
            if (errorMessages != null) { %>
-               <div class="error-messages"><%=errorMessages%></div>
+               <div class="error-messages" style="color: red;"><%=errorMessages%></div>
         <% } %>
         
         <!-- ログインフォーム -->
-        <form action="/Bbs/IndexServlet" method="post" name="Form1" onSubmit="return chkField1()">
+        <form action="/Bbs/IndexServlet" method="post" name="Form1">
             <div class="form-group">
-                <label for="id" class="itemName">ユーザーID:</label>
-                <input type="text" name="id" id="id" value="" required>
+                <label for="id" class="itemName">ID:</label>
+                <input type="text" name="id" id="id" value="">
             </div>
             <div class="form-group">
                 <label for="password" class="itemName">パスワード:</label>
-                <input type="password" name="password" id="password" required>
+                <input type="password" name="password" id="password">
             </div>
             <div class="form-group">
                 <input class="button" type="submit" name="Login" value="ログイン">
             </div>
         </form>
     </div>
-    <script type="text/javascript" src="css/fix.js"></script>
 </body>
 </html>

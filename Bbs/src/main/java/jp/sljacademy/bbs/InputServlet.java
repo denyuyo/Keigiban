@@ -61,6 +61,7 @@ public class InputServlet extends HttpServlet {
 			// 設定したJSPページにリクエストを転送
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 			dispatcher.forward(request, response);
+			return;
 		} else {
 			// セッションが無効な場合は、ログインページなどの別のページにリダイレクト
 			resultPage = PropertyLoader.getProperty("url.bbs.index");
@@ -99,26 +100,9 @@ public class InputServlet extends HttpServlet {
 			articleBean.setText("");
 			articleBean.setColorId("");
 			
-			try {
-				
-				ColorMasterDao colorDao = new ColorMasterDao();
-				List<ColorMasterBean> colors = colorDao.getAllColors();
-				request.setAttribute("colors", colors);
-			} catch (NamingException | SQLException e) {
-				throw new ServletException("Database error", e);
-			}
-			
 			// セッションスコープに更新したBeanをセット
 			session.setAttribute("ArticleBean", articleBean);
-			
-			// 同じページにフォワード
-			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-			dispatcher.forward(request, response);
-			return;
-			
-		} else {
-			
-			// JNDIを使用してDataSourceを取得
+		
 			try {
 				// 色情報を取得
 				ColorMasterDao colorDao = new ColorMasterDao();
@@ -126,12 +110,21 @@ public class InputServlet extends HttpServlet {
 				// request=一画面分やり取りしたら終わり（ユーザからサーバに処理が行って帰ってくる）
 				request.setAttribute("colors", colors);
 				
+				// 過去の記事データを取得
 				 ArticleDao dao = new ArticleDao();
 				 List<ArticleBean> articles = dao.getAllArticles();
 				 request.setAttribute("articles", articles);
-			} catch (Exception e) {
+			} catch (NamingException | SQLException e) {
 				throw new ServletException("Database error", e);
 			}
+			
+			
+			// 同じページにフォワード
+			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+			dispatcher.forward(request, response);
+			return;
+			
+		} else {
 					
 			// 残りの記事情報をセット
 			articleBean.setName(request.getParameter("name"));
@@ -140,16 +133,8 @@ public class InputServlet extends HttpServlet {
 			articleBean.setText(request.getParameter("text"));
 			articleBean.setColorId(request.getParameter("color"));
 			
-			// CommonFunctionを用いてバリデーションを行う
+			// CommonFunctionを用いてバリデーションエラーメッセージを初期化
 			String  validationErrors = CommonFunction.validateInput(articleBean);
-			
-			if (!validationErrors.isEmpty()) {
-				// バリデーションエラーがあればリクエストにセットして入力画面に戻る
-				request.setAttribute("validationErrors", validationErrors);
-				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-				dispatcher.forward(request, response);
-				return;
-			}
 			
 			if (!CommonFunction.checkEmail(articleBean.getEmail())) {
 				// Eメールの形式が不正であればエラーメッセージをリクエストにセット
@@ -159,6 +144,21 @@ public class InputServlet extends HttpServlet {
 				return;
 			}
 			
+			// 本文が空でないかチェック
+		    if (!CommonFunction.isNotBlank(articleBean.getText())) {
+		    	request.setAttribute("textError", "本文を入力してください。");
+				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+				dispatcher.forward(request, response);
+				return;
+		    }
+		    
+		    if (!validationErrors.isEmpty()) {
+				// バリデーションエラーがあればリクエストにセットして入力画面に戻る
+				request.setAttribute("validationErrors", validationErrors);
+				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+				dispatcher.forward(request, response);
+				return;
+			}
 			
 			//入力情報をセッションに再設定
 			session.setAttribute("ArticleBean", articleBean);

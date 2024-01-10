@@ -26,7 +26,7 @@ public class ArticleDao {
 	
 	public void createArticle(ArticleBean article) throws SQLException {
 		Connection connection = source.getConnection();
-		String sql = "INSERT INTO article (article_id, create_date, name, email, title, text, color_id) VALUES (?, NOW(), ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO article (create_date, name, email, title, text, color_id) VALUES (NOW(), ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, article.getName());
