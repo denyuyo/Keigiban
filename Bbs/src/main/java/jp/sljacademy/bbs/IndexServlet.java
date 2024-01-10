@@ -50,7 +50,7 @@ public class IndexServlet extends HttpServlet {
 		        // アカウント情報が存在し、かつパスワードが一致している場合はtrueを返す
 		        return (account != null && account.getPassword().equals(password));
 		    } catch (NamingException | SQLException e) {
-		        // エラーが発生した場合はログに記録する（適切な処理が必要）
+		        // エラーが発生した場合はログに記録
 		        e.printStackTrace();
 		        return false;
 		    }
@@ -133,7 +133,9 @@ public class IndexServlet extends HttpServlet {
 			session.setAttribute("id", id);
 				
 		} catch (NamingException | SQLException e) { 
-			request.setAttribute("errorMessage", e.getMessage());
+			e.printStackTrace();
+			resultPage = PropertyLoader.getProperty("url.jsp.error");
+			response.sendRedirect(resultPage);
 		}
 		resultPage = PropertyLoader.getProperty("url.bbs.input");
 		response.sendRedirect(resultPage);

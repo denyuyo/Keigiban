@@ -57,7 +57,9 @@ public class InputServlet extends HttpServlet {
 				List<ColorMasterBean> colors = colorDao.getAllColors();
 				request.setAttribute("colors", colors);
 			} catch (NamingException | SQLException e) {
-				throw new ServletException("Database error", e);
+				e.printStackTrace();
+				resultPage = PropertyLoader.getProperty("url.jsp.error");
+				response.sendRedirect(resultPage);
 			}
 			
 			// 設定したJSPページにリクエストを転送
@@ -114,7 +116,9 @@ public class InputServlet extends HttpServlet {
 				 List<ArticleBean> articles = dao.getAllArticles();
 				 request.setAttribute("articles", articles);
 			} catch (NamingException | SQLException e) {
-				throw new ServletException("Database error", e);
+				e.printStackTrace();
+				resultPage = PropertyLoader.getProperty("url.jsp.error");
+				response.sendRedirect(resultPage);
 			}
 			
 			// セッションスコープに更新したBeanをセット
@@ -146,7 +150,9 @@ public class InputServlet extends HttpServlet {
 				 List<ArticleBean> articles = dao.getAllArticles();
 				 request.setAttribute("articles", articles);
 			} catch (NamingException | SQLException e) {
-				throw new ServletException("Database error", e);
+				e.printStackTrace();
+				resultPage = PropertyLoader.getProperty("url.jsp.error");
+				response.sendRedirect(resultPage);
 			}
 			
 			// CommonFunctionを用いてバリデーションエラーメッセージを初期化
