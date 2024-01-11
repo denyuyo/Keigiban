@@ -114,18 +114,22 @@ public class ColorMasterDao {
 			
 			// statementに格納されたSQL文をexecuteQueryでデータベースに実行し、その結果を保持するためにresultSetを用意
 			ResultSet resultSet = statement.executeQuery();
-			// resultSetの結果（この場合は特定のカラーコード）を一行づつ見ていく
+			// ResultSet オブジェクトから取得されたカラーコードを一つずつ処理する
 			while (resultSet.next()) {
+				// ループ内で取得されたカラーコードを color 変数に代入
 				color = resultSet.getString("COLOR_CODE");
 			}
+			// データベースへの問い合わせを終了させる
 			statement.close();
 		} catch (SQLException e) {
 			throw e;
+		// データベースの接続を切る
 		} finally {
 			if (connection != null) {
 				connection.close();
 			}
 		}
+		// SQLクエリで指定されたカラーデータをデータベースから取得し、最終的なカラーコードを格納した変数 color を返す
 		return color;
 	}
 }
