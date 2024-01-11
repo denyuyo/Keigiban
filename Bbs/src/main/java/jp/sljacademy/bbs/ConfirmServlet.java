@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import jp.sljacademy.bbs.bean.ArticleBean;
 import jp.sljacademy.bbs.dao.ArticleDao;
 import jp.sljacademy.bbs.dao.ColorMasterDao;
+import jp.sljacademy.bbs.util.CommonFunction;
 import jp.sljacademy.bbs.util.PropertyLoader;
 
 /**
@@ -91,6 +92,8 @@ public class ConfirmServlet extends HttpServlet {
 		
 		// セッションを取得
 		HttpSession session = request.getSession();
+		
+		String resultPage = PropertyLoader.getProperty("url.bbs.input");
 				
 		// セッションからArticleBeanオブジェクトを取得（存在しない場合は新規作成）
 		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
@@ -112,17 +115,46 @@ public class ConfirmServlet extends HttpServlet {
 					session.setAttribute("ArticleBean", articleBean);
 				 } catch (NamingException | SQLException e) {
 					 e.printStackTrace();
-					 String resultPage = PropertyLoader.getProperty("url.jsp.error");
+					 resultPage = PropertyLoader.getProperty("url.jsp.error");
 					 response.sendRedirect(resultPage);
 				}
+				 
+				// CommonFunctionを用いてバリデーションエラーメッセージを初期化
+				String  validationErrors = CommonFunction.validateInput(articleBean);
+				
+				if (!CommonFunction.checkEmail(articleBean.getEmail())) {
+					// Eメールの形式が不正であればエラーメッセージをリクエストにセット
+					request.setAttribute("emailError", "不正なEメールアドレス形式です。");
+					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+					dispatcher.forward(request, response);
+					return;
+				}
+				
+				// 本文が空でないかチェック
+				if (!CommonFunction.isNotBlank(articleBean.getText())) {
+					request.setAttribute("textError", "本文を入力してください。");
+					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+					dispatcher.forward(request, response);
+					return;
+				}
+				
+				if (!validationErrors.isEmpty()) {
+					// バリデーションエラーがあればリクエストにセットして入力画面に戻る
+					request.setAttribute("validationErrors", validationErrors);
+					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+					dispatcher.forward(request, response);
+					return;
+				}
 				// 記事が作成できたら、CompleteServletに案内する
-				 response.sendRedirect(PropertyLoader.getProperty("url.bbs.complete"));
+				resultPage = PropertyLoader.getProperty("url.bbs.complete");
+				response.sendRedirect(resultPage);
 			}
 		} else if (request.getParameter("Back") != null) {
 			// 「戻る」ボタンを押した場合
-	        // InputServletに案内する
-			String resultPage = PropertyLoader.getProperty("url.bbs.input");
+			// InputServletに案内する
+			resultPage = PropertyLoader.getProperty("url.bbs.input");
 			response.sendRedirect(resultPage);
 		}
+		 
 	}
 }

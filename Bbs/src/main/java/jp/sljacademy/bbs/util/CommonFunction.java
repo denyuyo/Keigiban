@@ -8,20 +8,23 @@ import jp.sljacademy.bbs.bean.ArticleBean;
 // 項目制限
 
 public class CommonFunction {
-	// Eメールのバリデーションパターン
-	private static final String EMAIL_REGEX = "^[\\w\\.-]+@[\\w\\.-]+\\.[a-z]{2,}$";
+	// 「@test.co.jp」で終わるメールアドレスのみ許可（@以前は半角英数字のみ）
+	private static final String EMAIL_REGEX = "^[A-Za-z0-9]+@test\\.co\\.jp$";
+	// EMAIL_REGEXをコンパイルして、後で何度でも使えるようにしてる
 	private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);	
 	
-	// Eメールのバリデーションメソッド
+	// メールアドレスが正しい形式かどうかをチェックするメソッド
 	public static boolean checkEmail(String email) {
-		if (email == null || email.trim().isEmpty()) {
+		// メールアドレスがnullまたは空白のみの場合、不正な形式とみなす
+		if (!isNotBlank(email)) {
 			return false;
 		}
+		// メールアドレスが正しい形式かどうかをチェック
 		Matcher matcher = EMAIL_PATTERN.matcher(email);
 		return matcher.matches();
 	}
 	
-	// 文字列の長さをチェックするメソッド
+	// 文字列の長さが特定の長さ以下かどうかをチェックするメソッド
 	public static boolean checkLen(String text, int maxLength) {
 		return text != null && text.length() <= maxLength;
 	}
@@ -31,24 +34,24 @@ public class CommonFunction {
 		return text != null && !text.trim().isEmpty();
 	}
 	
-	// 入力バリデーションを行うメソッド
+	// ユーザーの入力に関するバリデーションを行い、問題があればエラーメッセージを作成するメソッド
 	public static String validateInput(ArticleBean article) {
 		StringBuilder errors = new StringBuilder();
 		
-		// 名前の長さチェック
+		// 名前が30文字以内かどうかをチェック
 		if (!checkLen(article.getName(), 30)) {
 			errors.append("名前は30文字以内で入力してください。\n");
 		}
 		
-		// Eメールの形式と長さチェック
+		// メールアドレスが正しい形式で、30文字以内かどうかをチェック
 		if (!checkEmail(article.getEmail()) || !checkLen(article.getEmail(), 30)) {
 			errors.append("正しいEメールアドレスを30文字以内で入力してください。\n");
 		}
-		// タイトルの長さチェック（タイトルは空でも可）
+		// タイトルが50文字以内かどうかをチェック（タイトルは空でもOK）
 		if (isNotBlank(article.getTitle()) && !checkLen(article.getTitle(), 50)) {
 			errors.append("タイトルは50文字以内で入力してください。\n");
 		}
-		// 本文の長さチェック
+		// 本文が100文字以内かどうかをチェック
 		if (!checkLen(article.getText(), 100)) {
 			errors.append("本文は100文字以内で入力してください。\n");
 		}
@@ -65,12 +68,11 @@ public class CommonFunction {
 	
 	// 名前が空の場合に "nobody" を返すメソッド
 	public static String getDefaultName(String name) {
-		// trim：文字列から前後の空白を除去
-		return (name == null || name.trim().isEmpty()) ? "nobody" : name;
+		return !isNotBlank(name) ? "nobody" : name;
 	}
 	
 	// タイトルが空の場合に "(no title)" を返すメソッド
 	public static String getDefaultTitle(String title) {
-		return (title == null || title.trim().isEmpty()) ? "(no title)" : title;
+		return !isNotBlank(title) ? "(no title)" : title;
 	}
 }

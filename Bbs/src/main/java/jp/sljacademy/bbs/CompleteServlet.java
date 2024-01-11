@@ -37,8 +37,21 @@ public class CompleteServlet extends HttpServlet {
 		
 		String resultPage = PropertyLoader.getProperty("url.jsp.complete");
 		
-		RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-		dispatcher.forward(request, response);
+		// セッションを取得
+		HttpSession session = request.getSession(false);
+				
+		// セッションが存在し、ユーザーIDがセッションにセットされているかを確認
+		if (session != null && session.getAttribute("id") != null) {
+			
+			// 設定したJSPページにリクエストを転送
+			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+			dispatcher.forward(request, response);
+			return;
+		} else {
+			// セッションが無効な場合は、ログインページにリダイレクト
+			resultPage = PropertyLoader.getProperty("url.bbs.index");
+			response.sendRedirect(resultPage);
+		}
 	}
 
 	/**
