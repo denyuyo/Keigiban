@@ -99,7 +99,7 @@
 	<table class="postedArticle"  style="color: #<%= article.getColorCode() %>">
 		<tr>
 			<td><%= article.getArticleId() %></td>
-			<td><%= CommonFunction.getDefaultTitle(article.getTitle()) %></td>
+			<td><%= CommonFunction.getDefault(article.getTitle(), "(no title)") %></td>
 		</tr>
 		<tr>
 			<td colspan="2"><%= CommonFunction.convertLineBreaksToHtml(article.getText()) %></td>
@@ -107,7 +107,7 @@
 		<tr>
 			<td colspan="2">
 				<%= article.getCreateDateView() %>&emsp;
-				<a href="mailto:<%= article.getEmail() %>"><%= CommonFunction.getDefaultName(article.getName()) %></a>
+				<a href="mailto:<%= article.getEmail() %>"><%= CommonFunction.t(CommonFunction.getDefault(article.getName(), "nobody")) %></a>
 			</td>
 		</tr>
 		<%

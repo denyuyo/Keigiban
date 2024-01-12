@@ -29,7 +29,7 @@
 				<tr>
 					<td class="itemName">名前</td>
 					<!-- getParameter=ユーザーがform等に入力した値を取得 -->
-					<td><%= CommonFunction.getDefaultName(articleBean.getName()) %></td>
+					<td><%= CommonFunction.getDefault(articleBean.getName(), "nobody") %></td>
 				</tr>
 				<tr>
 					<td class="itemName">E-mail</td>
@@ -37,7 +37,7 @@
 				</tr>
 				<tr>
 					<td class="itemName">タイトル</td>
-					<td><%= CommonFunction.getDefaultTitle(articleBean.getTitle()) %></td>
+					<td><%= CommonFunction.getDefault(articleBean.getTitle(), "(no title)") %></td>
 				</tr>
 				<tr>
 					<td class="itemName">本文</td>

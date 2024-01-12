@@ -42,7 +42,7 @@ public class ColorMasterDao {
 		//「COLOR_MASTERテーブルからCOLOR_ID、COLOR_CODE、COLOR_NAMEという３つの列のデータを取り出す」
 		String sql = "SELECT COLOR_ID, COLOR_CODE, COLOR_NAME FROM COLOR_MASTER";
 		try {
-			// データベースに問い合わせをするための特別な箱（PreparedStatement）を作り、その中にSQLの命令文（sql）を入れて、データベースに何を聞きたいかを準備している
+			// データベースに問い合わせをするための特別な箱（statement）を作り、その中にSQLの命令文（sql）を入れて、データベースに何を聞きたいかを準備している
 			PreparedStatement statement = connection.prepareStatement(sql);
 			// データベースに対して先ほど準備したSQLの命令（statement）を実際に送り、executeQuery() メソッドでデータベースにSQL命令を実行させ、その答えをresultSetという箱に入れている
 			ResultSet resultSet = statement.executeQuery();

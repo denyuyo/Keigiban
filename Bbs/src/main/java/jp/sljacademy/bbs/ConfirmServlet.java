@@ -120,7 +120,7 @@ public class ConfirmServlet extends HttpServlet {
 				}
 				 
 				// CommonFunctionを用いてバリデーションエラーメッセージを初期化
-				String  validationErrors = CommonFunction.validateInput(articleBean);
+				String  validationErrors = CommonFunction.validate(articleBean);
 				
 				if (!CommonFunction.checkEmail(articleBean.getEmail())) {
 					// Eメールの形式が不正であればエラーメッセージをリクエストにセット
