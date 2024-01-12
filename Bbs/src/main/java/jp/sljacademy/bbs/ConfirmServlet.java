@@ -37,36 +37,46 @@ public class ConfirmServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	// 目的：ユーザーが特定の条件を満たしている場合にセッション内のデータを利用してページを表示する
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		
+		// PropertyLoader クラスの getProperty メソッドを呼び出して、"url.jsp.confirm" プロパティの値を取得し、resultPage に格納
 		String resultPage = PropertyLoader.getProperty("url.jsp.confirm");
 		
-		// セッションを取得
+		// セッションを取得し、存在しない場合は null を返す
 		HttpSession session = request.getSession(false);
 				
-		// セッションが存在し、ユーザーIDがセッションにセットされているかを確認
+		// セッションが存在し、かつセッション属性 "id" が存在している場合
 		if (session != null && session.getAttribute("id") != null) {
 			
-			// セッションからArticleBeanを取得
+			// セッションから "ArticleBean" という名前の属性を取得し、それを articleBean 変数に代入
 			ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 			
-			// ユーザが選択したcolorIdを取得
+			// articleBean オブジェクトからユーザーが選択した色のID（colorId）を取得
 			String colorId = articleBean.getColorId();
 			
-			//colorIdからcolorcodeを取得
+			// ユーザーが選択した色に関連する情報をデータベースから取得し、それをセッション内の articleBean オブジェクトに設定する
 			try {
+				// ColorMasterDao クラスの新しいインスタンス（オブジェクト）を作成
 				ColorMasterDao colorDao = new ColorMasterDao();
+				// colorDao インスタンスを使用して、ユーザーが選択した色のID (colorId) をもとに、データベースから色のコード (colorCode) を取得
 				String colorCode = colorDao.getColorCode(colorId);
-				// colorCodeをArticleBeanにセット
+				// 取得した colorCode を articleBean オブジェクトに設定して、articleBean オブジェクトに選択した色のコードを関連付ける
 				articleBean.setColorCode(colorCode);
 			} catch(NamingException | SQLException e) {
+				/*
+				 * printStackTrace()：エラーが発生した際にスタックトレース（エラーの詳細な情報）を表示するために使用されるメソッド
+				 */
 				e.printStackTrace();
 				resultPage = PropertyLoader.getProperty("url.jsp.error");
 				response.sendRedirect(resultPage);
 				
-				//入力情報をセッションに再設定
+				/*
+				 * セッション（HttpSession）にデータを保存。このデータの名前（キー）は "ArticleBean" で、値は articleBean オブジェクト
+				 */
+				// ユーザーが選択した色情報をsessionに関連付け、articleBean オブジェクトに保存する
 				session.setAttribute("ArticleBean", articleBean);
 			}
 			
@@ -74,8 +84,9 @@ public class ConfirmServlet extends HttpServlet {
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 			dispatcher.forward(request, response);
 			return;
+		// url直書きでの遷移を阻止
 		} else {
-			// セッションが無効な場合は、ログインページなどの別のページにリダイレクト
+			// セッションが無効な場合は、ログインページにリダイレクト
 			resultPage = PropertyLoader.getProperty("url.bbs.index");
 			response.sendRedirect(resultPage);
 		}
@@ -90,12 +101,12 @@ public class ConfirmServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		
-		// セッションを取得
+		// セッションを取得し、存在しない場合は新しく作る
 		HttpSession session = request.getSession();
 		
 		String resultPage = PropertyLoader.getProperty("url.bbs.input");
 				
-		// セッションからArticleBeanオブジェクトを取得（存在しない場合は新規作成）
+		// セッションからArticleBeanオブジェクトを取得、存在しない場合は新しく作る
 		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 		if (articleBean == null) {
 			articleBean = new ArticleBean();
