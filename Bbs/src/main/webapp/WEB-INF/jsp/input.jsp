@@ -43,6 +43,9 @@
 		<% if (request.getAttribute("emailError") != null) { %>
 			<p class="error" style="color: red;"><%= request.getAttribute("emailError") %></p>
 		<% } %>
+		<% if (request.getAttribute("titleError") != null) { %>
+			<p class="error" style="color: red;"><%= request.getAttribute("titleError") %></p>
+		<% } %>
 			<tr>
 				<td class=itemName id="name">名前</td>
 				<td><input type="text" name="name" value="<%= articleBean.getName() %>"></td>

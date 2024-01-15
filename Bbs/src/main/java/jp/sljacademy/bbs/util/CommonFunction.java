@@ -18,10 +18,6 @@ public class CommonFunction {
 	
 	// メールアドレスが正しい形式かどうかをチェックする checkEmail メソッド
 	public static boolean checkEmail(String email) {
-		// メールアドレスがnullまたは空白のみの場合、不正な形式とみなす
-		if (!isNotBlank(email)) {
-			return false;
-		}
 		/*
 		 * メールアドレスが正しい形式かどうかをチェック
 		 * Matcher：文字列の中から特定のパターン（[A-Za-z0-9]+@test\\.co\\.jp$）に一致する部分を見つけたり、照合したりするJavaのクラス
@@ -57,23 +53,15 @@ public class CommonFunction {
 		 */
 		StringBuilder errors = new StringBuilder();
 		
-		// 名前が30文字以内
-		if (!checkLen(article.getName(), 30)) {
-			errors.append("名前は30文字以内で入力してください。\n");
-		}
-		
-		// メールアドレスが正しい形式で、30文字以内
-		if (!checkEmail(article.getEmail()) && !checkLen(article.getEmail(), 30)) {
-			errors.append("正しいEメールアドレスを30文字以内で入力してください。\n");
+		// メールアドレスが正しい形式
+		if (!checkEmail(article.getEmail())) {
+			errors.append("正しいEメールアドレスを入力してください。\n");
 		}
 		// タイトルが50文字以内（タイトルは空でもOK）
 		if (isNotBlank(article.getTitle()) && !checkLen(article.getTitle(), 50)) {
 			errors.append("タイトルは50文字以内で入力してください。\n");
 		}
-		// 本文が100文字以内
-		if (!checkLen(article.getText(), 100)) {
-			errors.append("本文は100文字以内で入力してください。\n");
-		}
+		
 		// errors に格納されている文字列を取り出して、それをメソッドの戻り値として返す
 		return errors.toString();
 	}

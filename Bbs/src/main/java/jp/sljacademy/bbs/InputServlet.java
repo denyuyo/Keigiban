@@ -61,9 +61,11 @@ public class InputServlet extends HttpServlet {
 				// 取得した色情報をリクエスト属性に設定し、JSPで表示できるようにする
 				request.setAttribute("colors", colors);
 			} catch (NamingException | SQLException e) {
-				e.printStackTrace();
+				// エラーメッセージをリクエストに設定
+				request.setAttribute("errorMessage", e.getMessage());
 				resultPage = PropertyLoader.getProperty("url.jsp.error");
-				response.sendRedirect(resultPage);
+				// エラーページに転送
+				request.getRequestDispatcher(resultPage).forward(request, response);
 			}
 			// 設定したJSPページにリクエストを転送
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
@@ -123,9 +125,11 @@ public class InputServlet extends HttpServlet {
 				 List<ArticleBean> articles = dao.getAllArticles();
 				 request.setAttribute("articles", articles);
 			} catch (NamingException | SQLException e) {
-				e.printStackTrace();
+				// エラーメッセージをリクエストに設定
+				request.setAttribute("errorMessage", e.getMessage());
 				resultPage = PropertyLoader.getProperty("url.jsp.error");
-				response.sendRedirect(resultPage);
+				// エラーページに転送
+				request.getRequestDispatcher(resultPage).forward(request, response);
 			}
 			// ユーザーがフォームに入力したデータをセッション内に保存し、それを他のページや機能で利用できるようにする
 			session.setAttribute("ArticleBean", articleBean);
@@ -155,9 +159,11 @@ public class InputServlet extends HttpServlet {
 				 List<ArticleBean> articles = dao.getAllArticles();
 				 request.setAttribute("articles", articles);
 			} catch (NamingException | SQLException e) {
-				e.printStackTrace();
+				// エラーメッセージをリクエストに設定
+				request.setAttribute("errorMessage", e.getMessage());
 				resultPage = PropertyLoader.getProperty("url.jsp.error");
-				response.sendRedirect(resultPage);
+				// エラーページに転送
+				request.getRequestDispatcher(resultPage).forward(request, response);
 			}
 			
 			// articleBean オブジェクトのバリデーションを実行し、バリデーションエラーメッセージを取得して validationErrors に格納
@@ -174,6 +180,14 @@ public class InputServlet extends HttpServlet {
 			// 本文が空でないかチェック
 			if (!CommonFunction.isNotBlank(articleBean.getText())) {
 				request.setAttribute("textError", "本文を入力してください。");
+				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+				dispatcher.forward(request, response);
+				return;
+			}
+			
+			// タイトルが50字以内かチェック（空でもOK）
+			if (!CommonFunction.checkLen(articleBean.getTitle(), 50)) {
+				request.setAttribute("titleError", "タイトルは50文字以内で入力してください。");
 				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 				dispatcher.forward(request, response);
 				return;

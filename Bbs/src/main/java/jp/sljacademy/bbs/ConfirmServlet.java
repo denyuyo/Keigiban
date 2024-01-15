@@ -66,12 +66,11 @@ public class ConfirmServlet extends HttpServlet {
 				// 取得した colorCode を articleBean オブジェクトに設定して、articleBean オブジェクトに選択した色のコードを関連付ける
 				articleBean.setColorCode(colorCode);
 			} catch(NamingException | SQLException e) {
-				/*
-				 * printStackTrace()：エラーが発生した際にスタックトレース（エラーの詳細な情報）を表示するために使用されるメソッド
-				 */
-				e.printStackTrace();
+				// エラーメッセージをリクエストに設定
+				request.setAttribute("errorMessage", e.getMessage());
 				resultPage = PropertyLoader.getProperty("url.jsp.error");
-				response.sendRedirect(resultPage);
+				// エラーページに転送
+				request.getRequestDispatcher(resultPage).forward(request, response);
 				
 				/*
 				 * セッション（HttpSession）にデータを保存。このデータの名前（キー）は "ArticleBean" で、値は articleBean オブジェクト

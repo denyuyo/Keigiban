@@ -151,10 +151,12 @@ public class IndexServlet extends HttpServlet {
 			// セッションにユーザーID（id）を保存して、どのユーザーがログインしているか関連付ける
 			session.setAttribute("id", id);
 				
-		} catch (NamingException | SQLException e) { 
-			e.printStackTrace();
+		} catch (Exception e) { 
+			// エラーメッセージをリクエストに設定
+			request.setAttribute("errorMessage", e.getMessage());
 			resultPage = PropertyLoader.getProperty("url.jsp.error");
-			response.sendRedirect(resultPage);
+			// エラーページに転送
+			request.getRequestDispatcher(resultPage).forward(request, response);
 		}
 		// 問題がなくログインに成功した場合、一覧画面に遷移
 		resultPage = PropertyLoader.getProperty("url.bbs.input");
