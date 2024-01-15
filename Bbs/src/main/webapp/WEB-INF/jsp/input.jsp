@@ -14,10 +14,11 @@
 	response.setHeader("Cache-Control", "no-cache");
 	response.setDateHeader("Expires", 0);
 	
+	// セッションから ArticleBean オブジェクトを取得
 	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
-	// 選択された色のIDを取得
+	
+	// サーブレットからリクエスト属性として設定された colors リスト（色情報）を取得し、JSPで利用できるようにする
 	List<ColorMasterBean> colors = (List<ColorMasterBean>) request.getAttribute("colors");
-
 %>
 
 <!DOCTYPE html>
@@ -26,21 +27,13 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" href="css/master.css" type="text/css">
 <title>記事入力画面</title>
-<script>
-    function changeColor(colorCode) {
-        var elements = document.querySelectorAll('.inputArticle td input, .inputArticle td textarea');
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].style.color = '#' + colorCode;
-        }
-    }
-</script>
 </head>
 <body>
 	<header> 掲示板 </header>
 	
 	<form action="/Bbs/InputServlet" method="post" id="form">
 		<table class="inputArticle">
-		<!-- もしリクエストの属性に "validationErrors" という名前で何かが設定されていたら -->
+		<!-- 各エラーメッセージ（validationErrors、textError、emailError）がリクエスト属性に設定されている場合、エラーメッセージを表示 -->
 		<% if (request.getAttribute("validationErrors") != null) { %>
 			<p class="error" style="color: red;"><%= request.getAttribute("validationErrors") %></p>
 		<% } %>
@@ -72,16 +65,20 @@
 				<td>
 					<%-- 色情報のリスト（colors）をループして、各色に対するラジオボタンを生成 --%>
 					<% for (ColorMasterBean color : colors) { %>
-					
+						<%-- ラジオボタンを表現し、name="color"でグループ化することで、同じname属性を持つラジオボタンは1つだけが選択できる --%>
 						<input class="radio" type="radio" name="color" value="<%= color.getColorId() %>"
-							onclick="changeColor('<%= color.getColorCode() %>')"
-							<%-- ユーザが選択したcolorIdとデータベースのが同じかチェックしてる --%>
-							<%= articleBean.getColorId().equals(color.getColorId()) ? "checked" : "" %> >
+							<%-- 
+								colorIdとColorMasterBeanオブジェクトのcolorIdが一致する場合、ラジオボタンを選択済み（checked）にする 
+								真：checked　偽：空文字 
+							--%>
+							<%= articleBean.getColorId().equals(color.getColorId()) ? "checked" : "" %>>
 							
-						<label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;">
-							<%= color.getColorName() %>
-						</label>
-				    <% } %>
+							<%-- ラジオボタンの id 属性と for 属性を関連付けて、対応するカラーコードを取得する --%>
+							<label for="color_<%= color.getColorId() %>" style="color: #<%= color.getColorCode() %>;">
+								<%= color.getColorName() %>
+							</label>
+					<% } %>
+
 				</td>
 			</tr>
 			
@@ -90,7 +87,7 @@
 		<input class="button" type="submit" name="clear" value="クリア">
 	</form>
 	<hr>
-	<%-- 記事情報のリストをリクエストスコープから取得 --%>
+	<%-- 取得した記事リストが存在し、かつ空でない場合、記事リスト内の各記事をループして表示 --%>
 	<% 
 		List<ArticleBean> articles = (List<ArticleBean>) request.getAttribute("articles");
 		if (articles != null && !articles.isEmpty()) {

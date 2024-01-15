@@ -18,54 +18,41 @@ public class ArticleBean {
 	
 
 	public ArticleBean()  {
+		// 初期値を空白
 		title = "";
 		text = "";
+		// checkdを"青"
 		colorId = "3";
 	}
 	
 	public int getArticleId() {
 		return articleId;
 	}
-
 	public void setArticleId(int articleId) {
 		this.articleId = articleId;
 	}
 	
 	public String getCreateDateView() {
+		// 指定されたフォーマットで日付と時刻を表示するためのフォーマッタを作成
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分");
+		// createDate という日付情報を、上記で作成したフォーマッタ sdf を使用して指定されたフォーマットに整形し、文字列として返す
 		return sdf.format(createDate);
 	}
-	
 	
 	public Date getCreateDate() {
 		return createDate;
 	}
-
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
 	
-	public String getColorCode() {
-		return colorCode;
-	}
-
-	public void setColorCode(String colorCode) {
-		this.colorCode = colorCode;
-	}
-
-	
-	public String getColorId() {
-		return colorId;
-	}
-	public void setColorId(String colorId) {
-		this.colorId = colorId;
-	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public String getEmail() {
 		return email;
 	}
@@ -79,11 +66,25 @@ public class ArticleBean {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	
 	public String getText() {
 		return text;
 	}
 	public void setText(String text) {
 		this.text = text;
 	}
-
+	
+	public String getColorId() {
+		return colorId;
+	}
+	public void setColorId(String colorId) {
+		this.colorId = colorId;
+	}
+	
+	public String getColorCode() {
+		return colorCode;
+	}
+	public void setColorCode(String colorCode) {
+		this.colorCode = colorCode;
+	}
 }

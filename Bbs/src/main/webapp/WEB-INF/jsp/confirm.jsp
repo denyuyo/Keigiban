@@ -8,8 +8,9 @@
 	response.setHeader("Cache-Control", "no-cache");
 	response.setDateHeader("Expires", 0);
 	
+	// セッションから ArticleBean オブジェクトを取得
 	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
-
+	
 %>
 <!DOCTYPE html>
 <html>
@@ -28,7 +29,7 @@
 			<table class="inputArticle">
 				<tr>
 					<td class="itemName">名前</td>
-					<!-- getParameter=ユーザーがform等に入力した値を取得 -->
+					<!-- getParameter：ユーザーがフォームに入力した値を取得 -->
 					<td><%= CommonFunction.getDefault(articleBean.getName(), "nobody") %></td>
 				</tr>
 				<tr>

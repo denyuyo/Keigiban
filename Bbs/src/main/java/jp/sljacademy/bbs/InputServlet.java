@@ -38,40 +38,42 @@ public class InputServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		
-		// input.jspのURLを取得
+		// リクエストの処理後にフォワードするページのURLを resultPage 変数に設定
 		String resultPage = PropertyLoader.getProperty("url.jsp.input");
 		
-		// 現在のセッションを取得（新しいセッションは作成しない）
+		// セッションを取得し、存在しない場合は null を返す
 		HttpSession session = request.getSession(false);
 		
-		// セッションが存在し、ユーザーIDがセッションにセットされているかを確認
+		// セッションが存在し、かつセッション属性 "id" が存在している場合
 		if (session != null && session.getAttribute("id") != null) {
 			try {
 				// 過去の記事データを取得
 				ArticleDao dao = new ArticleDao();
+				// データベースからすべての記事情報を取得し、 ArticleBean オブジェクトのリストとして返す
 				List<ArticleBean> articles = dao.getAllArticles();
+				// 取得した記事情報をリクエスト属性に設定し、JSPで表示できるようにする
 				request.setAttribute("articles", articles);
 				
 				// 色情報を取得
 				ColorMasterDao colorDao = new ColorMasterDao();
+				// データベースからすべての色情報を取得し、 ColorMasterBean オブジェクトのリストとして返す
 				List<ColorMasterBean> colors = colorDao.getAllColors();
+				// 取得した色情報をリクエスト属性に設定し、JSPで表示できるようにする
 				request.setAttribute("colors", colors);
 			} catch (NamingException | SQLException e) {
 				e.printStackTrace();
 				resultPage = PropertyLoader.getProperty("url.jsp.error");
 				response.sendRedirect(resultPage);
 			}
-			
 			// 設定したJSPページにリクエストを転送
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 			dispatcher.forward(request, response);
 			return;
 		} else {
-			// セッションが無効な場合は、ログインページなどの別のページにリダイレクト
+			// セッションが無効な場合は、ログインページにリダイレクト
 			resultPage = PropertyLoader.getProperty("url.bbs.index");
 			response.sendRedirect(resultPage);
 		}
-		
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -82,13 +84,18 @@ public class InputServlet extends HttpServlet {
 		
 		String resultPage = PropertyLoader.getProperty("url.jsp.input");
 		
-		// セッションを取得
+		// セッションを取得し、存在しない場合は新しく作る
 		HttpSession session = request.getSession();
 		
-		// セッションからArticleBeanを取得（なければ新しく作成）
+		/*
+		 * 目的：ユーザーが入力した記事情報をセッション内に保存するため、新しい ArticleBean オブジェクトを作成し設定
+		 */
+		// セッションからArticleBeanオブジェクトを取得、存在しない場合は新しく作る
 		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
+		// セッション内に ArticleBean オブジェクトが存在しない場合
 		if (articleBean == null) {
 			articleBean = new ArticleBean();
+			// セッション内に ArticleBean オブジェクトを保存し、後でセッションから取り出せるようにしている
 			session.setAttribute("ArticleBean", articleBean);
 		}
 		
@@ -96,8 +103,9 @@ public class InputServlet extends HttpServlet {
 		String clear = request.getParameter("clear");
 		
 		
-		// 'クリア'ボタンが押された場合、特定のフィールドをリセット
+		// ユーザーが「クリア」ボタンをクリックした場合（つまり、clear の値が "クリア" と等しい）、特定のフィールドをリセット
 		if ("クリア".equals(clear)) {
+			// クリア時のデフォルト値
 			articleBean.setName("");
 			articleBean.setEmail("");
 			articleBean.setTitle("");
@@ -108,7 +116,6 @@ public class InputServlet extends HttpServlet {
 				// 色情報を取得
 				ColorMasterDao colorDao = new ColorMasterDao();
 				List<ColorMasterBean> colors = colorDao.getAllColors();
-				// request=一画面分やり取りしたら終わり（ユーザからサーバに処理が行って帰ってくる）
 				request.setAttribute("colors", colors);
 				
 				// 過去の記事データを取得
@@ -120,18 +127,17 @@ public class InputServlet extends HttpServlet {
 				resultPage = PropertyLoader.getProperty("url.jsp.error");
 				response.sendRedirect(resultPage);
 			}
-			
-			// セッションスコープに更新したBeanをセット
+			// ユーザーがフォームに入力したデータをセッション内に保存し、それを他のページや機能で利用できるようにする
 			session.setAttribute("ArticleBean", articleBean);
 			
-			// 同じページにフォワード
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 			dispatcher.forward(request, response);
 			return;
-			
+		
+		// 目的：ユーザーが入力した記事をセッションに一時保存し、バリデーション通過で次のステップへ進む
 		} else {
 					
-			// 残りの記事情報をセット
+			// ユーザーがフォームから提供したデータを取得し、それを articleBean オブジェクトの対応するフィールドにセット
 			articleBean.setName(request.getParameter("name"));
 			articleBean.setEmail(request.getParameter("email"));
 			articleBean.setTitle(request.getParameter("title"));
@@ -142,7 +148,6 @@ public class InputServlet extends HttpServlet {
 				// 色情報を取得
 				ColorMasterDao colorDao = new ColorMasterDao();
 				List<ColorMasterBean> colors = colorDao.getAllColors();
-				// request=一画面分やり取りしたら終わり（ユーザからサーバに処理が行って帰ってくる）
 				request.setAttribute("colors", colors);
 				
 				// 過去の記事データを取得
@@ -155,11 +160,11 @@ public class InputServlet extends HttpServlet {
 				response.sendRedirect(resultPage);
 			}
 			
-			// CommonFunctionを用いてバリデーションエラーメッセージを初期化
+			// articleBean オブジェクトのバリデーションを実行し、バリデーションエラーメッセージを取得して validationErrors に格納
 			String  validationErrors = CommonFunction.validate(articleBean);
 			
+			// Eメールの形式が正しいかどうかをチェック
 			if (!CommonFunction.checkEmail(articleBean.getEmail())) {
-				// Eメールの形式が不正であればエラーメッセージをリクエストにセット
 				request.setAttribute("emailError", "不正なEメールアドレス形式です。");
 				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 				dispatcher.forward(request, response);
@@ -174,8 +179,8 @@ public class InputServlet extends HttpServlet {
 				return;
 			}
 			
+			// バリデーションエラーメッセージが空じゃない場合、リクエストにセットして一覧画面に戻る
 			if (!validationErrors.isEmpty()) {
-				// バリデーションエラーがあればリクエストにセットして入力画面に戻る
 				request.setAttribute("validationErrors", validationErrors);
 				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 				dispatcher.forward(request, response);

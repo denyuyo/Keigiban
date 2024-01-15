@@ -97,44 +97,60 @@ public class ConfirmServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+		// 文字エンコーディングをUTF-8（多言語対応）に設定
 		request.setCharacterEncoding("UTF-8");
+		// ユーザーに表示するHTMLのコンテンツタイプもUTF-8に設定
 		response.setContentType("text/html;charset=UTF-8");
 		
 		// セッションを取得し、存在しない場合は新しく作る
 		HttpSession session = request.getSession();
 		
 		String resultPage = PropertyLoader.getProperty("url.bbs.input");
+		
+		/*
+		 * 'setAttribute'
+		 * セッションに情報を保存するための命令をするメソッド
+		 * 2つの引数がある。最初はデータを取り出すための名前（キー）、2番目に実際のデータ（この場合は articleBean オブジェクト）を指定する
+		 */
 				
 		// セッションからArticleBeanオブジェクトを取得、存在しない場合は新しく作る
 		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 		if (articleBean == null) {
 			articleBean = new ArticleBean();
+			// セッションに ArticleBean ラベル名で articleBean オブジェクト（ユーザーが投稿しようとしている記事情報）を保存して、後でセッションから取り出せるようにしている
 			session.setAttribute("ArticleBean", articleBean);
 		}
 		 
-		// ユーザーが「送信」ボタンを押した場合（Submit）
+		// "Submit" ボタンが押された場合
 		 if (request.getParameter("Submit") != null) {
+			// セッションを取得し、存在しない場合は null を返す
 			 session = request.getSession(false);
+			 // ArticleBean クラス型の変数 article に、セッションから取得した "ArticleBean"（記事情報）を代入
 			 ArticleBean article = (ArticleBean) session.getAttribute("ArticleBean");
 			 
-			 //　データベースに記事情報を保存する
+			 // ユーザーが入力した記事情報がある場合、データベースに保存
 			 if (article != null) {
 				 try {
+					// 新しい ArticleDao オブジェクトを作成し、データベースにアクセスするための dao 変数を用意
 					ArticleDao dao = new ArticleDao();
+					// dao オブジェクトの createArticle メソッドを呼び出し、article オブジェクトを引数として渡してデータベースに新しい記事を作成
 					dao.createArticle(article);
+					// セッション内の "ArticleBean" 属性に articleBean オブジェクトを再度設定して、記事情報を更新
 					session.setAttribute("ArticleBean", articleBean);
 				 } catch (NamingException | SQLException e) {
+					 // 詳細なエラーメッセージを表示
 					 e.printStackTrace();
 					 resultPage = PropertyLoader.getProperty("url.jsp.error");
+					 // エラーページに転送
 					 response.sendRedirect(resultPage);
 				}
 				 
-				// CommonFunctionを用いてバリデーションエラーメッセージを初期化
+				// CommonFunction クラスの validate メソッドを呼び出して、articleBean オブジェクトのバリデーションを実行し、エラーメッセージを取得
 				String  validationErrors = CommonFunction.validate(articleBean);
 				
+				// ユーザーが入力したEメールアドレスの形式が正しいかどうかをチェック
 				if (!CommonFunction.checkEmail(articleBean.getEmail())) {
-					// Eメールの形式が不正であればエラーメッセージをリクエストにセット
+					// Eメールの形式が不正な場合、エラーメッセージをリクエストオブジェクトに設定して表示
 					request.setAttribute("emailError", "不正なEメールアドレス形式です。");
 					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 					dispatcher.forward(request, response);
@@ -149,20 +165,22 @@ public class ConfirmServlet extends HttpServlet {
 					return;
 				}
 				
+				/*
+				 *  バリデーションエラーがある場合、エラーメッセージをリクエストに設定し、エラーページに転送
+				 */
+				// validationErrors 変数に格納されたバリデーションエラーメッセージが空でないかを確認
 				if (!validationErrors.isEmpty()) {
-					// バリデーションエラーがあればリクエストにセットして入力画面に戻る
 					request.setAttribute("validationErrors", validationErrors);
 					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 					dispatcher.forward(request, response);
 					return;
 				}
-				// 記事が作成できたら、CompleteServletに案内する
+				// 記事が作成できたら、完了画面に遷移
 				resultPage = PropertyLoader.getProperty("url.bbs.complete");
 				response.sendRedirect(resultPage);
 			}
+		// // "Back" ボタンが押された場合
 		} else if (request.getParameter("Back") != null) {
-			// 「戻る」ボタンを押した場合
-			// InputServletに案内する
 			resultPage = PropertyLoader.getProperty("url.bbs.input");
 			response.sendRedirect(resultPage);
 		}
