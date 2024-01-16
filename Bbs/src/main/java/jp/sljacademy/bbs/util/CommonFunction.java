@@ -18,6 +18,11 @@ public class CommonFunction {
 	
 	// メールアドレスが正しい形式かどうかをチェックする checkEmail メソッド
 	public static boolean checkEmail(String email) {
+		
+		// 空白文字列の場合は true を返す
+		if (email == null || email.trim().isEmpty()) {
+			return true;
+		}
 		/*
 		 * メールアドレスが正しい形式かどうかをチェック
 		 * Matcher：文字列の中から特定のパターン（[A-Za-z0-9]+@test\\.co\\.jp$）に一致する部分を見つけたり、照合したりするJavaのクラス

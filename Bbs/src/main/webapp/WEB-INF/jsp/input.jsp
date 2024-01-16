@@ -6,6 +6,7 @@
 	import="java.text.SimpleDateFormat"
    	import="java.util.List"
    	import="java.util.Date"
+   	import="java.util.Collections"
 %>
 
 <%
@@ -93,6 +94,8 @@
 	<%-- 取得した記事リストが存在し、かつ空でない場合、記事リスト内の各記事をループして表示 --%>
 	<% 
 		List<ArticleBean> articles = (List<ArticleBean>) request.getAttribute("articles");
+		// Collections.reverseOrder() メソッドを使用してリストを降順にソート
+		Collections.reverse(articles);
 		if (articles != null && !articles.isEmpty()) {
 			for (ArticleBean article : articles) {
 	%>
@@ -107,7 +110,16 @@
 		<tr>
 			<td colspan="2">
 				<%= article.getCreateDateView() %>&emsp;
-				<a href="mailto:<%= article.getEmail() %>"><%= CommonFunction.t(CommonFunction.getDefault(article.getName(), "nobody")) %></a>
+				<%-- article オブジェクトからメールアドレスを取得し、email 変数に格納 --%>
+				<% String email = article.getEmail(); %>
+				
+				<%-- メールアドレスがnullでなく、空白でないかをチェック --%>
+				<% if (email != null && !email.trim().isEmpty()) { %>
+				<%-- メールアドレスが有効な場合にはメールリンクを生成し、無効な場合には名前だけを表示する --%>
+					<a href="mailto:<%= email %>"><%= CommonFunction.t(CommonFunction.getDefault(article.getName(), "nobody")) %></a>
+				<% } else { %>
+					<%= CommonFunction.t(CommonFunction.getDefault(article.getName(), "nobody")) %>
+				<% } %>
 			</td>
 		</tr>
 		<%
