@@ -16,7 +16,6 @@
 	<header>掲示板</header>
 	<div class="form-container">
 		<p class="login-message">あなたのIDとパスワードを入力してログインしてください。</p>
-		
 		<!--
 			request.getAttribute("errorMessages") を使用してServletのリクエスト属性からエラーメッセージを取得し、
 			errorMessages を使用して表示する

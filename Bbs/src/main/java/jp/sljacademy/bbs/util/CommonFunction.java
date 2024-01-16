@@ -36,14 +36,14 @@ public class CommonFunction {
 	
 	// 文字列の長さが特定の長さ以下かどうかをチェックする checkLen メソッド
 	public static boolean checkLen(String text, int maxLength) {
-		//「文字列 text が存在し（null でない）、かつその長さが指定された最大長 maxLength 以下である場合に true を返し、それ以外の場合に false を返す」
+		// 文字列 text が存在し、かつその長さが指定された最大長 maxLength 以下である場合に true を返し、それ以外の場合に false を返す
 		return text != null && text.length() <= maxLength;
 	}
 	
-	// 文字列が空でないかをチェックする isNotBlank メソッド
-	public static boolean isNotBlank(String text) {
-		//「文字列 text が存在し、trim() で前後の空白を取り除いても空でない場合に true を返し、それ以外の場合に false を返す」
-		return text != null && !text.trim().isEmpty();
+	// 文字列が空かどうかをチェックする isNotBlank メソッド
+	public static boolean isBlank(String text) {
+		// 文字列 text が存在せず、trim() で前後の空白を取り除いても空である場合に true を返し、それ以外の場合に false を返す
+		return text == null || text.trim().isEmpty();
 	}
 	
 	/*
@@ -63,17 +63,31 @@ public class CommonFunction {
 			errors.append("正しいEメールアドレスを入力してください。\n");
 		}
 		// タイトルが50文字以内（タイトルは空でもOK）
-		if (isNotBlank(article.getTitle()) && !checkLen(article.getTitle(), 50)) {
+		if (!isBlank(article.getTitle()) && !checkLen(article.getTitle(), 50)) {
 			errors.append("タイトルは50文字以内で入力してください。\n");
 		}
 		
 		// 本文が空でないかチェック
-		if (!isNotBlank(article.getText())) {
+		if (isBlank(article.getText())) {
 			errors.append("本文を入力してください。\n");
 		}
 		
 		// errors に格納されている文字列を取り出して、それをメソッドの戻り値として返す
 		return errors.toString();
+	}
+	
+	public static String check(String id, String password) {
+		String errorMessages = "";
+		
+		if (isBlank(id)) {
+			errorMessages = "IDが入力されていません。<br>";
+		}
+		// += 演算子：errorMessages に新しいエラーメッセージを追加
+		if (isBlank(password)) {
+			errorMessages += "パスワードが入力されていません。<br>";
+		}
+		// 呼び出し元にエラーメッセージを表示
+		return errorMessages;
 	}
 	
 	// テキスト内の改行をHTMLの <br> タグに変換する convertLineBreaksToHtml メソッド
@@ -92,7 +106,7 @@ public class CommonFunction {
 	// 文字列が空でない場合はそのまま返し、空の場合は defaultValue として指定された文字列を返す getDefault メソッド
 	public static String getDefault(String value, String defaultValue) {
 		// value が空でない場合には value の値を、空の場合にはデフォルト値 defaultValue を返す
-		return isNotBlank(value) ? value : defaultValue;
+		return isBlank(value) ? value : defaultValue;
 	}
 	
 	// 与えられた文字列 name をそのまま返すだけの t メソッド。aタグに含めるため使用
