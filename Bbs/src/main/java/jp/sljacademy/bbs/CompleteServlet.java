@@ -62,7 +62,20 @@ public class CompleteServlet extends HttpServlet {
 		response.setContentType("text/html;charset=UTF-8");
 		
 		// PropertyLoader クラスの getProperty メソッドを呼び出して、"url.jsp.complete" プロパティの値を取得し、resultPage に格納
-		String resultPage = PropertyLoader.getProperty("url.jsp.complete");
+		String resultPage = PropertyLoader.getProperty("url.bbs.confirm");
+		
+		/*
+		 * referrer：request.getHeader("referer") を使用してリファラー（直前のページのURL）を取得するための変数
+		 */
+		// リファラーを取得
+		String referrer = request.getHeader("referer");
+		
+		// リファラーが存在せず、またはリファラーが "resultPage" と一致しない場合
+		if (referrer == null || !referrer.contains(resultPage)) {
+			// 一覧画面にリダイレクト
+			response.sendRedirect(resultPage);
+			return;
+		}
 		
 		/*
 		 * HttpSession：ユーザーのセッション管理とデータの一時的な保存に使用されるオブジェクト
@@ -79,6 +92,7 @@ public class CompleteServlet extends HttpServlet {
 			 * request.getRequestDispatcher(resultPage) ：resultPage に格納されている文字列を使用して、リクエストを転送先のリソースに送るための RequestDispatcher オブジェクトを作成
 			 * dispatcher.forward(request, response)：作成した RequestDispatcher オブジェクトを使用して、リクエストとレスポンスを指定されたリソースに転送
 			 */
+			resultPage = PropertyLoader.getProperty("url.jsp.complete");
 			// 設定したJSPページにリクエストを転送
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 			dispatcher.forward(request, response);

@@ -67,6 +67,11 @@ public class CommonFunction {
 			errors.append("タイトルは50文字以内で入力してください。\n");
 		}
 		
+		// 本文が空でないかチェック
+		if (!isNotBlank(article.getText())) {
+			errors.append("本文を入力してください。\n");
+		}
+		
 		// errors に格納されている文字列を取り出して、それをメソッドの戻り値として返す
 		return errors.toString();
 	}

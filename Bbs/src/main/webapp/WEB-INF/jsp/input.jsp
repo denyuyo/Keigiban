@@ -34,19 +34,10 @@
 	
 	<form action="/Bbs/InputServlet" method="post" id="form">
 		<table class="inputArticle">
-		<!-- 各エラーメッセージ（validationErrors、textError、emailError）がリクエスト属性に設定されている場合、エラーメッセージを表示 -->
-		<% if (request.getAttribute("validationErrors") != null) { %>
-			<p class="error" style="color: red;"><%= request.getAttribute("validationErrors") %></p>
-		<% } %>
-		<% if (request.getAttribute("textError") != null) { %>
-			<p class="error" style="color: red;"><%= request.getAttribute("textError") %></p>
-		<% } %>
-		<% if (request.getAttribute("emailError") != null) { %>
-			<p class="error" style="color: red;"><%= request.getAttribute("emailError") %></p>
-		<% } %>
-		<% if (request.getAttribute("titleError") != null) { %>
-			<p class="error" style="color: red;"><%= request.getAttribute("titleError") %></p>
-		<% } %>
+			<!-- エラーメッセージ（validationErrors）がリクエスト属性に設定されている場合、エラーメッセージを表示 -->
+			<% if (request.getAttribute("validationErrors") != null) { %>
+				<p class="error" style="color: red;"><%= request.getAttribute("validationErrors") %></p>
+			<% } %>
 			<tr>
 				<td class=itemName id="name">名前</td>
 				<td><input type="text" name="name" value="<%= articleBean.getName() %>"></td>

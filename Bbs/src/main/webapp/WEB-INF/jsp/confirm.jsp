@@ -27,6 +27,10 @@
 		<p>以下の内容で投稿します。</p>
 		<form action="/Bbs/ConfirmServlet" method="post"  style="color: #<%= articleBean.getColorCode() %>">
 			<table class="inputArticle">
+				<!-- エラーメッセージ（validationErrors）がリクエスト属性に設定されている場合、エラーメッセージを表示 -->
+				<% if (request.getAttribute("validationErrors") != null) { %>
+					<p class="error" style="color: red;"><%= request.getAttribute("validationErrors") %></p>
+				<% } %>
 				<tr>
 					<td class="itemName">名前</td>
 					<!-- getParameter：ユーザーがフォームに入力した値を取得 -->

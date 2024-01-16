@@ -43,7 +43,20 @@ public class ConfirmServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		
 		// PropertyLoader クラスの getProperty メソッドを呼び出して、"url.jsp.confirm" プロパティの値を取得し、resultPage に格納
-		String resultPage = PropertyLoader.getProperty("url.jsp.confirm");
+		String resultPage = PropertyLoader.getProperty("url.bbs.input");
+		
+		/*
+		 * referrer：request.getHeader("referer") を使用してリファラー（直前のページのURL）を取得するための変数
+		 */
+		// リファラーを取得
+		String referrer = request.getHeader("referer");
+		
+		// リファラーが存在せず、またはリファラーが "resultPage" と一致しない場合
+		if (referrer == null || !referrer.contains(resultPage)) {
+			// 一覧画面にリダイレクト
+			response.sendRedirect(resultPage);
+			return;
+		}
 		
 		// セッションを取得し、存在しない場合は null を返す
 		HttpSession session = request.getSession(false);
@@ -79,6 +92,7 @@ public class ConfirmServlet extends HttpServlet {
 				session.setAttribute("ArticleBean", articleBean);
 			}
 			
+			resultPage = PropertyLoader.getProperty("url.jsp.confirm");
 			// 設定したJSPページにリクエストを転送
 			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 			dispatcher.forward(request, response);
@@ -144,36 +158,20 @@ public class ConfirmServlet extends HttpServlet {
 					 response.sendRedirect(resultPage);
 				}
 				 
-				// CommonFunction クラスの validate メソッドを呼び出して、articleBean オブジェクトのバリデーションを実行し、エラーメッセージを取得
+				// articleBean オブジェクトのバリデーションを実行し、バリデーションエラーメッセージを取得して validationErrors に格納
 				String  validationErrors = CommonFunction.validate(articleBean);
 				
-				// ユーザーが入力したEメールアドレスの形式が正しいかどうかをチェック
-				if (!CommonFunction.checkEmail(articleBean.getEmail())) {
-					// Eメールの形式が不正な場合、エラーメッセージをリクエストオブジェクトに設定して表示
-					request.setAttribute("emailError", "不正なEメールアドレス形式です。");
-					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-					dispatcher.forward(request, response);
-					return;
-				}
-				
-				// 本文が空でないかチェック
-				if (!CommonFunction.isNotBlank(articleBean.getText())) {
-					request.setAttribute("textError", "本文を入力してください。");
-					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-					dispatcher.forward(request, response);
-					return;
-				}
-				
-				/*
-				 *  バリデーションエラーがある場合、エラーメッセージをリクエストに設定し、エラーページに転送
-				 */
-				// validationErrors 変数に格納されたバリデーションエラーメッセージが空でないかを確認
+				// バリデーションエラーメッセージが空じゃない場合、リクエストにセットして一覧画面に戻る
 				if (!validationErrors.isEmpty()) {
 					request.setAttribute("validationErrors", validationErrors);
 					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 					dispatcher.forward(request, response);
 					return;
 				}
+				
+				//入力情報をセッションに再設定
+				session.setAttribute("ArticleBean", articleBean);
+					
 				// 記事が作成できたら、完了画面に遷移
 				resultPage = PropertyLoader.getProperty("url.bbs.complete");
 				response.sendRedirect(resultPage);

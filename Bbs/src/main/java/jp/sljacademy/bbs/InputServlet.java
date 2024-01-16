@@ -169,30 +169,6 @@ public class InputServlet extends HttpServlet {
 			// articleBean オブジェクトのバリデーションを実行し、バリデーションエラーメッセージを取得して validationErrors に格納
 			String  validationErrors = CommonFunction.validate(articleBean);
 			
-			// Eメールの形式が正しいかどうかをチェック
-			if (!CommonFunction.checkEmail(articleBean.getEmail())) {
-				request.setAttribute("emailError", "不正なEメールアドレス形式です。");
-				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-				dispatcher.forward(request, response);
-				return;
-			}
-			
-			// 本文が空でないかチェック
-			if (!CommonFunction.isNotBlank(articleBean.getText())) {
-				request.setAttribute("textError", "本文を入力してください。");
-				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-				dispatcher.forward(request, response);
-				return;
-			}
-			
-			// タイトルが50字以内かチェック（空でもOK）
-			if (!CommonFunction.checkLen(articleBean.getTitle(), 50)) {
-				request.setAttribute("titleError", "タイトルは50文字以内で入力してください。");
-				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-				dispatcher.forward(request, response);
-				return;
-			}
-			
 			// バリデーションエラーメッセージが空じゃない場合、リクエストにセットして一覧画面に戻る
 			if (!validationErrors.isEmpty()) {
 				request.setAttribute("validationErrors", validationErrors);
