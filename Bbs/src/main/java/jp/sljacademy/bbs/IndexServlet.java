@@ -23,7 +23,7 @@ import jp.sljacademy.bbs.util.PropertyLoader;
 // @WebServlet("/IndexServlet")
 public class IndexServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-		
+	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -50,7 +50,7 @@ public class IndexServlet extends HttpServlet {
 		/*
 		 * リダイレクト (Redirect)：新しいURLへ移動する
 		 */
-		// セッションが存在し、かつ "id" という属性がセッションに存在する場合（ユーザーがログイン済み）、一覧画面にリダイレクト
+		// セッションが存在し、かつ "account" という属性がセッションに存在する場合（ユーザーがログイン済み）、一覧画面にリダイレクト
 		if (session != null && session.getAttribute("account") != null) {
 			response.sendRedirect(resultPage);
 			return;
@@ -78,8 +78,11 @@ public class IndexServlet extends HttpServlet {
 		String id = request.getParameter("id");
 		String password = request.getParameter("password");
 		
+		String errorMessages = "";
+		
 		// CommonFunctionのcheckメソッドを呼び出して妥当性チェックを行う
-		String errorMessages = CommonFunction.check(id, password);
+		errorMessages = CommonFunction.check(id, password);
+		
 		
 		// バリデーションエラーがある場合、ログイン画面でエラーメッセージを表示します
 		if (!errorMessages.isEmpty()) {
@@ -95,8 +98,9 @@ public class IndexServlet extends HttpServlet {
 			AccountBean account = dao.getAccount(id, password);
 			// もしデータベースに該当のアカウントが存在しない場合
 			if (account == null) {
+				errorMessages = "ログインできません。";
 				// エラーメッセージをログインフォームに表示させます
-				request.setAttribute("errorMessages", "ログインできません");
+				request.setAttribute("errorMessages",errorMessages);
 				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 				dispatcher.forward(request, response);
 				return;
@@ -120,10 +124,12 @@ public class IndexServlet extends HttpServlet {
 			session.setAttribute("account", account);
 				
 		} catch (Exception e) {
+			errorMessages = "エラーが発生しました。";
 			// 例外が発生したらエラー画面に飛ぶようにします
-			request.setAttribute("errorMessage", e.getMessage());
+			request.setAttribute("errorMessage", errorMessages);
 			resultPage = PropertyLoader.getProperty("url.jsp.error");
 			request.getRequestDispatcher(resultPage).forward(request, response);
+			return;
 		}
 		// 問題がなくログインに成功した場合、一覧画面に遷移
 		resultPage = PropertyLoader.getProperty("url.bbs.input");

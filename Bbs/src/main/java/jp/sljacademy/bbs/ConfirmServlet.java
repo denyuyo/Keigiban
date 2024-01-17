@@ -37,21 +37,23 @@ public class ConfirmServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	// 目的：ユーザーが特定の条件を満たしている場合にセッション内のデータを利用してページを表示する
+	// ユーザーが特定の条件を満たしている場合にセッション内のデータを利用してページを表示する
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		
-		// PropertyLoader クラスの getProperty メソッドを呼び出して、"url.jsp.confirm" プロパティの値を取得し、resultPage に格納
+		// URLのデフォルト値を設定
 		String resultPage = PropertyLoader.getProperty("url.bbs.input");
 		
+		String errorMessages = "";
+		
 		/*
-		 * referrer：request.getHeader("referer") を使用してリファラー（直前のページのURL）を取得するための変数
+		 * referrerを使用。直前のページのURLを取得するための変数
 		 */
 		// リファラーを取得
 		String referrer = request.getHeader("referer");
 		
-		// リファラーが存在せず、またはリファラーが "resultPage" と一致しない場合
+		// リファラーが存在せず、またはリファラーがresultPageと一致しない場合
 		if (referrer == null || !referrer.contains(resultPage)) {
 			// 一覧画面にリダイレクト
 			response.sendRedirect(resultPage);
@@ -60,49 +62,43 @@ public class ConfirmServlet extends HttpServlet {
 		
 		// セッションを取得し、存在しない場合は null を返す
 		HttpSession session = request.getSession(false);
-				
-		// セッションが存在し、かつセッション属性 "id" が存在している場合
-		if (session != null && session.getAttribute("id") != null) {
+		
+		// セッションが存在しない、またはセッション属性 "account" が存在しない場合
+		if (session == null || session.getAttribute("account") == null) {
 			
-			// セッションから "ArticleBean" という名前の属性を取得し、それを articleBean 変数に代入
-			ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
-			
-			// articleBean オブジェクトからユーザーが選択した色のID（colorId）を取得
-			String colorId = articleBean.getColorId();
-			
-			// ユーザーが選択した色に関連する情報をデータベースから取得し、それをセッション内の articleBean オブジェクトに設定する
-			try {
-				// ColorMasterDao クラスの新しいインスタンス（オブジェクト）を作成
-				ColorMasterDao colorDao = new ColorMasterDao();
-				// colorDao インスタンスを使用して、ユーザーが選択した色のID (colorId) をもとに、データベースから色のコード (colorCode) を取得
-				String colorCode = colorDao.getColorCode(colorId);
-				// 取得した colorCode を articleBean オブジェクトに設定して、articleBean オブジェクトに選択した色のコードを関連付ける
-				articleBean.setColorCode(colorCode);
-			} catch(NamingException | SQLException e) {
-				// エラーメッセージをリクエストに設定
-				request.setAttribute("errorMessage", e.getMessage());
-				resultPage = PropertyLoader.getProperty("url.jsp.error");
-				// エラーページに転送
-				request.getRequestDispatcher(resultPage).forward(request, response);
-				
-				/*
-				 * セッション（HttpSession）にデータを保存。このデータの名前（キー）は "ArticleBean" で、値は articleBean オブジェクト
-				 */
-				// ユーザーが選択した色情報をsessionに関連付け、articleBean オブジェクトに保存する
-				session.setAttribute("ArticleBean", articleBean);
-			}
-			
-			resultPage = PropertyLoader.getProperty("url.jsp.confirm");
-			// 設定したJSPページにリクエストを転送
-			RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-			dispatcher.forward(request, response);
-			return;
-		// url直書きでの遷移を阻止
-		} else {
-			// セッションが無効な場合は、ログインページにリダイレクト
+			// もしセッションが無効な場合は、ログインページにリダイレクトする
 			resultPage = PropertyLoader.getProperty("url.bbs.index");
 			response.sendRedirect(resultPage);
+			return;
 		}
+		// セッションからユーザーが入力した記事情報を取得して、articleBean に代入
+		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
+		
+		// ユーザーが入力したカラーIDを取得
+		String colorId = articleBean.getColorId();
+		
+		try {
+			// インスタンス
+			ColorMasterDao colorDao = new ColorMasterDao();
+			// ユーザーが選択した colorId をもとに、データベースから colorCode を取得
+			String colorCode = colorDao.getColorCode(colorId);
+			// 取得した colorCode を articleBean に設定します
+			articleBean.setColorCode(colorCode);
+		} catch(NamingException | SQLException e) {
+			errorMessages = "エラーが発生しました。";
+			request.setAttribute("errorMessage", errorMessages);
+			resultPage = PropertyLoader.getProperty("url.jsp.error");
+			request.getRequestDispatcher(resultPage).forward(request, response);
+			return;
+		}
+		// ユーザーが選択した色情報をセッション内に保存します
+		session.setAttribute("ArticleBean", articleBean);
+		
+		resultPage = PropertyLoader.getProperty("url.jsp.confirm");
+		// 問題ない場合CONFIRMJSPを表示します
+		RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+		dispatcher.forward(request, response);
+		return;
 	}
 
 	/**
@@ -110,9 +106,8 @@ public class ConfirmServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// 文字エンコーディングをUTF-8（多言語対応）に設定
+		
 		request.setCharacterEncoding("UTF-8");
-		// ユーザーに表示するHTMLのコンテンツタイプもUTF-8に設定
 		response.setContentType("text/html;charset=UTF-8");
 		
 		// セッションを取得し、存在しない場合は新しく作る
@@ -120,48 +115,43 @@ public class ConfirmServlet extends HttpServlet {
 		
 		String resultPage = PropertyLoader.getProperty("url.bbs.input");
 		
-		/*
-		 * 'setAttribute'
-		 * セッションに情報を保存するための命令をするメソッド
-		 * 2つの引数がある。最初はデータを取り出すための名前（キー）、2番目に実際のデータ（この場合は articleBean オブジェクト）を指定する
-		 */
+		String errorMessages = "";
 				
 		// セッションからArticleBeanオブジェクトを取得、存在しない場合は新しく作る
 		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 		if (articleBean == null) {
 			articleBean = new ArticleBean();
-			// セッションに ArticleBean ラベル名で articleBean オブジェクト（ユーザーが投稿しようとしている記事情報）を保存して、後でセッションから取り出せるようにしている
 			session.setAttribute("ArticleBean", articleBean);
 		}
 		 
 		// "Submit" ボタンが押された場合
 		 if (request.getParameter("Submit") != null) {
-			// セッションを取得し、存在しない場合は null を返す
+			// セッションが存在しなかったら null を返す
 			 session = request.getSession(false);
-			 // ArticleBean クラス型の変数 article に、セッションから取得した "ArticleBean"（記事情報）を代入
+			 // セッションから取得した記事情報を article に代入
 			 ArticleBean article = (ArticleBean) session.getAttribute("ArticleBean");
 			 
-			 // ユーザーが入力した記事情報がある場合、データベースに保存
+			 // ユーザーが入力した記事情報がある場合
 			 if (article != null) {
 				 try {
-					// 新しい ArticleDao オブジェクトを作成し、データベースにアクセスするための dao 変数を用意
+					// データベースにアクセスするための dao を用意
 					ArticleDao dao = new ArticleDao();
-					// dao オブジェクトの createArticle メソッドを呼び出し、article オブジェクトを引数として渡してデータベースに新しい記事を作成
+					// ArticleDao の createArticle メソッドを呼び出して、データベースに新しい記事を作成
 					dao.createArticle(article);
-					// セッション内の "ArticleBean" 属性に articleBean オブジェクトを再度設定して、記事情報を更新
+					// セッション内に記事情報を再度設定して更新します
 					session.setAttribute("ArticleBean", articleBean);
 				 } catch (NamingException | SQLException e) {
-					 // 詳細なエラーメッセージを表示
-					 e.printStackTrace();
+					 errorMessages = "エラーが発生しました。";
+					 request.setAttribute("errorMessage", errorMessages);
 					 resultPage = PropertyLoader.getProperty("url.jsp.error");
-					 // エラーページに転送
 					 response.sendRedirect(resultPage);
+					 return;
 				}
 				 
-				// articleBean オブジェクトのバリデーションを実行し、バリデーションエラーメッセージを取得して validationErrors に格納
+				// 記事情報のバリデーションを実行して、エラーメッセージを取得
 				String  validationErrors = CommonFunction.validate(articleBean);
 				
-				// バリデーションエラーメッセージが空じゃない場合、リクエストにセットして一覧画面に戻る
+				// エラーメッセージが空じゃない場合、リクエストにセットして一覧画面に戻る
 				if (!validationErrors.isEmpty()) {
 					request.setAttribute("validationErrors", validationErrors);
 					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
@@ -169,18 +159,18 @@ public class ConfirmServlet extends HttpServlet {
 					return;
 				}
 				
-				//入力情報をセッションに再設定
+				// バリデーションエラーがなかったら入力情報をセッションに再設定
 				session.setAttribute("ArticleBean", articleBean);
 					
-				// 記事が作成できたら、完了画面に遷移
+				// 記事が作成できたら、完了画面にリダイレクト
 				resultPage = PropertyLoader.getProperty("url.bbs.complete");
 				response.sendRedirect(resultPage);
+				return;
 			}
-		// // "Back" ボタンが押された場合
+		// "Back" ボタンが押された場合
 		} else if (request.getParameter("Back") != null) {
 			resultPage = PropertyLoader.getProperty("url.bbs.input");
 			response.sendRedirect(resultPage);
 		}
-		 
 	}
 }

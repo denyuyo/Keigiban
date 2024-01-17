@@ -63,7 +63,7 @@ public class CommonFunction {
 			errors.append("正しいEメールアドレスを入力してください。\n");
 		}
 		// タイトルが50文字以内（タイトルは空でもOK）
-		if (!isBlank(article.getTitle()) && !checkLen(article.getTitle(), 50)) {
+		if (!checkLen(article.getTitle(), 50)) {
 			errors.append("タイトルは50文字以内で入力してください。\n");
 		}
 		
@@ -106,7 +106,7 @@ public class CommonFunction {
 	// 文字列が空でない場合はそのまま返し、空の場合は defaultValue として指定された文字列を返す getDefault メソッド
 	public static String getDefault(String value, String defaultValue) {
 		// value が空でない場合には value の値を、空の場合にはデフォルト値 defaultValue を返す
-		return isBlank(value) ? value : defaultValue;
+		return !isBlank(value) ? value : defaultValue;
 	}
 	
 	// 与えられた文字列 name をそのまま返すだけの t メソッド。aタグに含めるため使用

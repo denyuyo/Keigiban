@@ -15,10 +15,10 @@
 	response.setHeader("Cache-Control", "no-cache");
 	response.setDateHeader("Expires", 0);
 	
-	// セッションから ArticleBean オブジェクトを取得
+	// セッションから過去記事を取得
 	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 	
-	// サーブレットからリクエスト属性として設定された colors リスト（色情報）を取得し、JSPで利用できるようにする
+	// サーブレットからリクエスト属性として設定された colors リスト（色情報）を取得
 	List<ColorMasterBean> colors = (List<ColorMasterBean>) request.getAttribute("colors");
 %>
 
@@ -101,7 +101,6 @@
 		<tr>
 			<td colspan="2">
 				<%= article.getCreateDateView() %>&emsp;
-				<%-- article オブジェクトからメールアドレスを取得し、email 変数に格納 --%>
 				<% String email = article.getEmail(); %>
 				
 				<%-- メールアドレスがnullでなく、空白でないかをチェック --%>
