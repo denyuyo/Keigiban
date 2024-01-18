@@ -34,9 +34,9 @@
 	
 	<form action="/Bbs/InputServlet" method="post" id="form">
 		<table class="inputArticle">
-			<!-- エラーメッセージ（validationErrors）がリクエスト属性に設定されている場合、エラーメッセージを表示 -->
-			<% if (request.getAttribute("validationErrors") != null) { %>
-				<p class="error" style="color: red;"><%= request.getAttribute("validationErrors") %></p>
+			<!-- エラーメッセージ（errorMessages）がリクエスト属性に設定されている場合、エラーメッセージを表示 -->
+			<% if (request.getAttribute("errorMessages") != null) { %>
+				<p class="error" style="color: red;"><%= request.getAttribute("errorMessages") %></p>
 			<% } %>
 			<tr>
 				<td class=itemName id="name">名前</td>

@@ -46,7 +46,7 @@ public class AccountDao {
 	            account.setEmail(result.getString("EMAIL"));
 			}
 			statement.close();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// 例外がある場合は投げる
 			e.printStackTrace();
 			throw e;

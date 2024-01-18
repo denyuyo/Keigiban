@@ -21,11 +21,11 @@ public class ArticleDao {
 	public void createArticle(ArticleBean article) throws SQLException, NamingException {
 		Connection connection = null;
 		
-		// データベースへの接続を確立
-		connection = DbSource.getDateSource().getConnection();
 		// 現在の日時と指定された記事の詳細情報を ARTICLE テーブルに新しい行として挿入する
 		String sql = "INSERT INTO ARTICLE (CREATE_DATE, NAME, EMAIL, TITLE, TEXT, COLOR_ID) VALUES (NOW(), ?, ?, ?, ?, ?)";
 		try {
+			// データベースへの接続を確立
+			connection = DbSource.getDateSource().getConnection();
 			// SQL文を準備して、値を設定
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, article.getName());
@@ -36,7 +36,7 @@ public class ArticleDao {
 			// SQL文を実行
 			statement.executeUpdate();
 			statement.close();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// 例外がある場合は投げる
 			e.printStackTrace();
 			throw e;
@@ -50,8 +50,6 @@ public class ArticleDao {
 	// データベースからすべての記事を取得
 	public List<ArticleBean> getAllArticles() throws SQLException, NamingException {
 		Connection connection = null;
-		// データベース接続を確立
-		connection = DbSource.getDateSource().getConnection();
 		
 		List<ArticleBean> articles = new ArrayList<>();
 		// ARTICLE テーブルと COLOR_MASTER テーブルのCOLOR_IDが一致した場合、結合して COLOR_MASTER テーブル の COLOR_CODEを取得
@@ -72,6 +70,8 @@ public class ArticleDao {
 			+ "ON "
 				+ "ARTICLE.COLOR_ID = COLOR_MASTER.COLOR_ID;";
 		try {
+			// データベース接続を確立
+			connection = DbSource.getDateSource().getConnection();
 			// SQLクエリをセットして、実行する
 			PreparedStatement statement = connection.prepareStatement(sql);
 			
@@ -91,7 +91,7 @@ public class ArticleDao {
 				articles.add(article);
 			}
 			statement.close();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// 例外がある場合は投げる
 			e.printStackTrace();
 			throw e;

@@ -32,6 +32,18 @@ public class InputServlet extends HttpServlet {
 		super();
 	}
 	
+	private void fetchAndSetData(HttpServletRequest request) throws NamingException, SQLException {
+		// 色情報を取得
+		ColorMasterDao colorDao = new ColorMasterDao();
+		List<ColorMasterBean> colors = colorDao.getAllColors();
+		request.setAttribute("colors", colors);
+		
+		// 過去記事データを取得
+		ArticleDao dao = new ArticleDao();
+		List<ArticleBean> articles = dao.getAllArticles();
+		request.setAttribute("articles", articles);
+	}
+	
 	/*
 	 * ユーザーがログイン済みかどうかを確認し、ログインしている場合には過去の記事データと色情報を取得して表示させます
 	 */
@@ -57,22 +69,11 @@ public class InputServlet extends HttpServlet {
 			response.sendRedirect(resultPage);
 			return;
 		}
+		// ログインしている場合
 		try {
-			// 過去記事のデータを取得するためのデータベースを準備します
-			ArticleDao dao = new ArticleDao();
-			// データベースからすべての記事情報を取得して、（Listなのはデータが複数あるから）
-			List<ArticleBean> articles = dao.getAllArticles();
-			// リクエストに設定してJSPで表示できるようにします
-			request.setAttribute("articles", articles);
+			fetchAndSetData(request);
 			
-			// 色情報を取得するためのデータベース準備
-			ColorMasterDao colorDao = new ColorMasterDao();
-			// データベースからgetAllColorsですべての色情報を取得して、
-			List<ColorMasterBean> colors = colorDao.getAllColors();
-			// getAllColorsを持ったcolorsをリクエストに設定してJSPで表示できるようにする
-			request.setAttribute("colors", colors);
-			
-		} catch (NamingException | SQLException e) {
+		} catch (Exception e) {
 			errorMessages = "エラーが発生しました。";
 			// もし例外が発生した場合は、エラーページに転送します
 			request.setAttribute("errorMessage", errorMessages);
@@ -80,7 +81,7 @@ public class InputServlet extends HttpServlet {
 			request.getRequestDispatcher(resultPage).forward(request, response);
 			return;
 		}
-		// ログイン済みを確認された場合、INPUTJSPに転送します
+		// ログイン済みを確認されたので、INPUTJSPに転送します
 		RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 		dispatcher.forward(request, response);
 	}
@@ -101,39 +102,22 @@ public class InputServlet extends HttpServlet {
 		// セッションを取得して、存在しない場合は新しく作ります
 		HttpSession session = request.getSession();
 		
-		// フォームに入力されたユーザーの情報（名前、Eメール、タイトル、本文、色など）を受け取ります
-		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
-		// セッション内に ArticleBean オブジェクトが存在しない場合
-		if (articleBean == null) {
-			// 新しく作って、sessionにセットします
-			articleBean = new ArticleBean();
-			session.setAttribute("ArticleBean", articleBean);
-		}
-		
-		// 'クリア'ボタンのパラメータをチェック
-		String clear = request.getParameter("clear");
+		// 記事情報を初期化
+		ArticleBean articleBean =  null;
 		
 		// ユーザーが「クリア」ボタンをクリックした場合、特定のフィールドをリセットします
-		if ("クリア".equals(clear)) {
+		if (request.getParameter("clear") != null) {
 			// クリア時のデフォルト値
+			articleBean = new ArticleBean();
 			articleBean.setName("");
 			articleBean.setEmail("");
-			articleBean.setTitle("");
-			articleBean.setText("");
-			articleBean.setColorId("3");
 		
 			try {
-				// 色情報を取得
-				ColorMasterDao colorDao = new ColorMasterDao();
-				List<ColorMasterBean> colors = colorDao.getAllColors();
-				request.setAttribute("colors", colors);
-				
-				// 過去記事データを取得
-				 ArticleDao dao = new ArticleDao();
-				 List<ArticleBean> articles = dao.getAllArticles();
-				 request.setAttribute("articles", articles);
+				 fetchAndSetData(request);
 			} catch (NamingException | SQLException e) {
-				request.setAttribute("errorMessage", e.getMessage());
+				errorMessages = "エラーが発生しました。";
+				// もし例外が発生した場合は、エラーページに転送します
+				request.setAttribute("errorMessage", errorMessages);
 				resultPage = PropertyLoader.getProperty("url.jsp.error");
 				request.getRequestDispatcher(resultPage).forward(request, response);
 				return;
@@ -145,38 +129,35 @@ public class InputServlet extends HttpServlet {
 			dispatcher.forward(request, response);
 			return;
 		
-		// セッション内に ArticleBean オブジェクトが存在する場合
-		} else {
+		// 確認ボタンが押された場合
+		} else if(request.getParameter("Submit") != null) {
 			// ユーザーがフォームに入力したデータを取得して、それを articleBean オブジェクトの対応するフィールドにセットします
+			articleBean = new ArticleBean();
 			articleBean.setName(request.getParameter("name"));
 			articleBean.setEmail(request.getParameter("email"));
 			articleBean.setTitle(request.getParameter("title"));
 			articleBean.setText(request.getParameter("text"));
 			articleBean.setColorId(request.getParameter("color"));
 			
-			try {
-				// 色情報を取得
-				ColorMasterDao colorDao = new ColorMasterDao();
-				List<ColorMasterBean> colors = colorDao.getAllColors();
-				request.setAttribute("colors", colors);
-				
-				// 過去記事データを取得
-				 ArticleDao dao = new ArticleDao();
-				 List<ArticleBean> articles = dao.getAllArticles();
-				 request.setAttribute("articles", articles);
-			} catch (NamingException | SQLException e) {
-				errorMessages = "エラーが発生しました。";
-				request.setAttribute("errorMessage", errorMessages);
-				resultPage = PropertyLoader.getProperty("url.jsp.error");
-				request.getRequestDispatcher(resultPage).forward(request, response);
-			}
 			
 			// 記事情報にバリデーションをかけて、エラーメッセージを表示できるよう準備します
-			String  validationErrors = CommonFunction.validate(articleBean);
+			errorMessages = CommonFunction.validate(articleBean);
 			
 			// エラーメッセージが空じゃない場合、リクエストにセットして一覧画面に戻ります
-			if (!validationErrors.isEmpty()) {
-				request.setAttribute("validationErrors", validationErrors);
+			if (!errorMessages.isEmpty()) {
+				
+				request.setAttribute("errorMessages", errorMessages);
+				
+				try {
+					 fetchAndSetData(request);
+				} catch (Exception e) {
+					errorMessages = "エラーが発生しました。";
+					// もし例外が発生した場合は、エラーページに転送します
+					request.setAttribute("errorMessage", errorMessages);
+					resultPage = PropertyLoader.getProperty("url.jsp.error");
+					request.getRequestDispatcher(resultPage).forward(request, response);
+					return;
+				}
 				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 				dispatcher.forward(request, response);
 				return;

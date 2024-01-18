@@ -17,14 +17,14 @@ public class ColorMasterDao {
 	public List<ColorMasterBean> getAllColors() throws SQLException, NamingException {
 		Connection connection = null;
 		
-		// データベースへの接続を確立
-		connection = DbSource.getDateSource().getConnection();
 		
 		// ColorMasterBean型のオブジェクトをたくさん持てる空のcolorsリストを作成
 		List<ColorMasterBean> colors = new ArrayList<>();
 		// COLOR_MASTERテーブルからCOLOR_ID、COLOR_CODE、COLOR_NAMEという３つの列のデータを取り出す
 		String sql = "SELECT COLOR_ID, COLOR_CODE, COLOR_NAME FROM COLOR_MASTER";
 		try {
+			// データベースへの接続を確立
+			connection = DbSource.getDateSource().getConnection();
 			// sql文を準備
 			PreparedStatement statement = connection.prepareStatement(sql);
 			// データベースに準備したsql文を送って、executeQuery() で実行、その答えをresultSetの箱に入れている
@@ -38,7 +38,7 @@ public class ColorMasterDao {
 			}
 			// 終わったら閉じる
 			statement.close();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// 例外がある場合は投げる
 			e.printStackTrace();
 			throw e;
@@ -57,15 +57,14 @@ public class ColorMasterDao {
 		
 		Connection connection = null;
 		
-		// データベースへの接続を確立
-		connection = DbSource.getDateSource().getConnection();
-		
 		// colorを空文字で初期化して、変数が未定義（null）の状態を避ける
 		String color = "";
 		
 		// COLOR_MASTER テーブルから、指定された COLOR_ID に一致する行の COLOR_CODE の値を取得
 		String sql = "SELECT COLOR_CODE FROM COLOR_MASTER WHERE COLOR_ID = ?;";
 		try {
+			// データベースへの接続を確立
+			connection = DbSource.getDateSource().getConnection();
 			PreparedStatement statement = connection.prepareStatement(sql);
 			// 1番目のプレースホルダ（?）に colorId 変数の値をセット
 			statement.setString(1, colorId);
@@ -78,7 +77,7 @@ public class ColorMasterDao {
 			}
 			// データベースの問い合わせを閉じる
 			statement.close();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// 例外がある場合は投げる
 			e.printStackTrace();
 			throw e;
