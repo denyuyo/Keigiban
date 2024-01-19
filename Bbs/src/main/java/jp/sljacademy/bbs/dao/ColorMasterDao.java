@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.naming.NamingException;
 
@@ -14,12 +13,12 @@ import jp.sljacademy.bbs.util.DbSource;
 
 public class ColorMasterDao {
 	
-	public List<ColorMasterBean> getAllColors() throws SQLException, NamingException {
+	public ArrayList<ColorMasterBean> getAllColors() throws SQLException, NamingException {
 		Connection connection = null;
 		
 		
 		// ColorMasterBean型のオブジェクトをたくさん持てる空のcolorsリストを作成
-		List<ColorMasterBean> colors = new ArrayList<>();
+		ArrayList<ColorMasterBean> colors = new ArrayList<>();
 		// COLOR_MASTERテーブルからCOLOR_ID、COLOR_CODE、COLOR_NAMEという３つの列のデータを取り出す
 		String sql = "SELECT COLOR_ID, COLOR_CODE, COLOR_NAME FROM COLOR_MASTER";
 		try {
@@ -57,8 +56,8 @@ public class ColorMasterDao {
 		
 		Connection connection = null;
 		
-		// colorを空文字で初期化して、変数が未定義（null）の状態を避ける
-		String color = "";
+		// colorCodeを空文字で初期化して、変数が未定義（null）の状態を避ける
+		String colorCode = "";
 		
 		// COLOR_MASTER テーブルから、指定された COLOR_ID に一致する行の COLOR_CODE の値を取得
 		String sql = "SELECT COLOR_CODE FROM COLOR_MASTER WHERE COLOR_ID = ?;";
@@ -73,7 +72,7 @@ public class ColorMasterDao {
 			ResultSet resultSet = statement.executeQuery();
 			// colorに取得したカラーコードの情報を入れる
 			while (resultSet.next()) {
-				color = resultSet.getString("COLOR_CODE");
+				colorCode = resultSet.getString("COLOR_CODE");
 			}
 			// データベースの問い合わせを閉じる
 			statement.close();
@@ -89,6 +88,6 @@ public class ColorMasterDao {
 			}
 		}
 		// 呼び出し元に返す
-		return color;
+		return colorCode;
 	}
 }

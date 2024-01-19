@@ -4,7 +4,7 @@
    	import="jp.sljacademy.bbs.bean.ColorMasterBean"
    	import="jp.sljacademy.bbs.util.CommonFunction"
 	import="java.text.SimpleDateFormat"
-   	import="java.util.List"
+   	import="java.util.ArrayList"
    	import="java.util.Date"
    	import="java.util.Collections"
 %>
@@ -19,7 +19,7 @@
 	ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 	
 	// サーブレットからリクエスト属性として設定された colors リスト（色情報）を取得
-	List<ColorMasterBean> colors = (List<ColorMasterBean>) request.getAttribute("colors");
+	ArrayList<ColorMasterBean> colors = (ArrayList<ColorMasterBean>) request.getAttribute("colors");
 %>
 
 <!DOCTYPE html>
@@ -61,7 +61,7 @@
 					<%-- 色情報のリスト（colors）をループして、各色に対するラジオボタンを生成 --%>
 					<% for (ColorMasterBean color : colors) { %>
 						<%-- ラジオボタンを表現し、name="color"でグループ化することで、同じname属性を持つラジオボタンは1つだけが選択できる --%>
-						<input class="radio" type="radio" name="color" value="<%= color.getColorId() %>"
+						<input class="radio" type="radio" name="color" id="color_<%= color.getColorId() %>" value="<%= color.getColorId() %>"
 							<%-- 
 								colorIdとColorMasterBeanオブジェクトのcolorIdが一致する場合、ラジオボタンを選択済み（checked）にする 
 								真：checked　偽：空文字 
@@ -82,21 +82,18 @@
 		<input class="button" type="submit" name="clear" value="クリア">
 	</form>
 	<hr>
-	<%-- 取得した記事リストが存在し、かつ空でない場合、記事リスト内の各記事をループして表示 --%>
+	<%-- 取得した過去記事リスト内の各記事をループして表示 --%>
 	<% 
-		List<ArticleBean> articles = (List<ArticleBean>) request.getAttribute("articles");
-		// Collections.reverseOrder() メソッドを使用してリストを降順にソート
-		Collections.reverse(articles);
-		if (articles != null && !articles.isEmpty()) {
-			for (ArticleBean article : articles) {
+		ArrayList<ArticleBean> articles = (ArrayList<ArticleBean>) request.getAttribute("articles");
+		for (ArticleBean article : articles) {
 	%>
 	<table class="postedArticle"  style="color: #<%= article.getColorCode() %>">
 		<tr>
 			<td><%= article.getArticleId() %></td>
-			<td><%= CommonFunction.getDefault(article.getTitle(), "(no title)") %></td>
+			<td><%= article.getTitleView() %></td>
 		</tr>
 		<tr>
-			<td colspan="2"><%= CommonFunction.convertLineBreaksToHtml(article.getText()) %></td>
+			<td colspan="2"><%= article.getTextView() %></td>
 		</tr>
 		<tr>
 			<td colspan="2">
@@ -104,16 +101,15 @@
 				<% String email = article.getEmail(); %>
 				
 				<%-- メールアドレスがnullでなく、空白でないかをチェック --%>
-				<% if (email != null && !email.trim().isEmpty()) { %>
+				<% if (email != null && !email.isEmpty()) { %>
 				<%-- メールアドレスが有効な場合にはメールリンクを生成し、無効な場合には名前だけを表示する --%>
-					<a href="mailto:<%= email %>"><%= CommonFunction.t(CommonFunction.getDefault(article.getName(), "nobody")) %></a>
+					<a href="mailto:<%= email %>"><%= article.getNameView() %></a>
 				<% } else { %>
-					<%= CommonFunction.t(CommonFunction.getDefault(article.getName(), "nobody")) %>
+					<%= article.getNameView() %>
 				<% } %>
 			</td>
 		</tr>
 		<%
-			}
 		}
 		%>
 	</table>

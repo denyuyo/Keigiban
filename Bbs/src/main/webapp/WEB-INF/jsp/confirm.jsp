@@ -27,14 +27,9 @@
 		<p>以下の内容で投稿します。</p>
 		<form action="/Bbs/ConfirmServlet" method="post"  style="color: #<%= articleBean.getColorCode() %>">
 			<table class="inputArticle">
-				<!-- エラーメッセージ（validationErrors）がリクエスト属性に設定されている場合、エラーメッセージを表示 -->
-				<% if (request.getAttribute("validationErrors") != null) { %>
-					<p class="error" style="color: red;"><%= request.getAttribute("validationErrors") %></p>
-				<% } %>
 				<tr>
 					<td class="itemName">名前</td>
-					<!-- getParameter：ユーザーがフォームに入力した値を取得 -->
-					<td><%= CommonFunction.getDefault(articleBean.getName(), "nobody") %></td>
+					<td><%= articleBean.getNameView() %></td>
 				</tr>
 				<tr>
 					<td class="itemName">E-mail</td>
@@ -42,11 +37,11 @@
 				</tr>
 				<tr>
 					<td class="itemName">タイトル</td>
-					<td><%= CommonFunction.getDefault(articleBean.getTitle(), "(no title)") %></td>
+					<td><%= articleBean.getTitleView() %></td>
 				</tr>
 				<tr>
 					<td class="itemName">本文</td>
-					<td><%= CommonFunction.convertLineBreaksToHtml(articleBean.getText()) %></td>
+					<td><%= articleBean.getTextView() %></td>
 				</tr>
 			</table>
 			<input class="button" type="submit" name="Back" value="戻る">

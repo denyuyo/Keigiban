@@ -43,22 +43,9 @@ public class ConfirmServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		
 		// URLのデフォルト値を設定
-		String resultPage = PropertyLoader.getProperty("url.bbs.input");
+		String resultPage = PropertyLoader.getProperty("url.jsp.confirm");
 		
 		String errorMessages = "";
-		
-		/*
-		 * referrerを使用。直前のページのURLを取得するための変数
-		 */
-		// リファラーを取得
-		String referrer = request.getHeader("referer");
-		
-		// リファラーが存在せず、またはリファラーがresultPageと一致しない場合
-		if (referrer == null || !referrer.contains(resultPage)) {
-			// 一覧画面にリダイレクト
-			response.sendRedirect(resultPage);
-			return;
-		}
 		
 		// セッションを取得し、存在しない場合は null を返す
 		HttpSession session = request.getSession(false);
@@ -71,6 +58,20 @@ public class ConfirmServlet extends HttpServlet {
 			response.sendRedirect(resultPage);
 			return;
 		}
+		
+		/*
+		 * referrerを使用。直前のページのURLを取得するための変数
+		 */
+		// リファラーを取得
+		String referrer = request.getHeader("referer");
+		resultPage = PropertyLoader.getProperty("url.bbs.input");
+		// リファラーが存在せず、またはリファラーがresultPageと一致しない場合
+		if (referrer == null || !referrer.contains(resultPage)) {
+			// 一覧画面にリダイレクト
+			response.sendRedirect(resultPage);
+			return;
+		}
+		
 		// セッションからユーザーが入力した記事情報を取得して、articleBean に代入
 		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
 		
@@ -98,11 +99,13 @@ public class ConfirmServlet extends HttpServlet {
 		// 問題ない場合CONFIRMJSPを表示します
 		RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
 		dispatcher.forward(request, response);
-		return;
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	/*
+	 * ユーザーがフォームを提出した場合にデータベースに記事を作成し、それが成功した場合には完了画面にリダイレクト
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -110,64 +113,59 @@ public class ConfirmServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		
-		// セッションを取得し、存在しない場合は新しく作る
-		HttpSession session = request.getSession();
-		
-		String resultPage = PropertyLoader.getProperty("url.bbs.input");
+		String resultPage = PropertyLoader.getProperty("url.bbs.confirm");
 		
 		String errorMessages = "";
+		
+		// 投稿ボタンが押された場合
+		if (request.getParameter("Submit") != null) {
+			// セッションを取得し、存在しない場合は null を返す
+			HttpSession session = request.getSession(false);
+			// セッションから取得した記事情報を article に代入
+			ArticleBean article = (ArticleBean) session.getAttribute("ArticleBean");
+			
+			// 記事情報のバリデーションを実行して、エラーメッセージを取得
+			errorMessages = CommonFunction.validate(article);
+			
+			// エラーメッセージが空じゃない場合、リクエストにセットして一覧画面に戻る
+			if (!errorMessages.isEmpty()) {
+				resultPage = PropertyLoader.getProperty("url.bbs.input");
+				request.setAttribute("errorMessages", errorMessages);
+				RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
+				dispatcher.forward(request, response);
+				return;
+			}
+			
+			try {
+				// データベースにアクセスするための dao を用意
+				ArticleDao dao = new ArticleDao();
+				// ArticleDao の createArticle メソッドを呼び出して、データベースに新しい記事を作成
+				dao.createArticle(article);
 				
-		// セッションからArticleBeanオブジェクトを取得、存在しない場合は新しく作る
-		ArticleBean articleBean = (ArticleBean) session.getAttribute("ArticleBean");
-		if (articleBean == null) {
-			articleBean = new ArticleBean();
-			session.setAttribute("ArticleBean", articleBean);
-		}
-		 
-		// "Submit" ボタンが押された場合
-		 if (request.getParameter("Submit") != null) {
-			// セッションが存在しなかったら null を返す
-			 session = request.getSession(false);
-			 // セッションから取得した記事情報を article に代入
-			 ArticleBean article = (ArticleBean) session.getAttribute("ArticleBean");
-			 
-			 // ユーザーが入力した記事情報がある場合
-			 if (article != null) {
-				 try {
-					// データベースにアクセスするための dao を用意
-					ArticleDao dao = new ArticleDao();
-					// ArticleDao の createArticle メソッドを呼び出して、データベースに新しい記事を作成
-					dao.createArticle(article);
-					// セッション内に記事情報を再度設定して更新します
-					session.setAttribute("ArticleBean", articleBean);
-				 } catch (NamingException | SQLException e) {
-					 errorMessages = "エラーが発生しました。";
-					 request.setAttribute("errorMessage", errorMessages);
-					 resultPage = PropertyLoader.getProperty("url.jsp.error");
-					 response.sendRedirect(resultPage);
-					 return;
-				}
-				 
-				// 記事情報のバリデーションを実行して、エラーメッセージを取得
-				String  validationErrors = CommonFunction.validate(articleBean);
+				// まっさらな記事情報が入っている
+				ArticleBean art = new ArticleBean();
 				
-				// エラーメッセージが空じゃない場合、リクエストにセットして一覧画面に戻る
-				if (!validationErrors.isEmpty()) {
-					request.setAttribute("validationErrors", validationErrors);
-					RequestDispatcher dispatcher = request.getRequestDispatcher(resultPage);
-					dispatcher.forward(request, response);
-					return;
-				}
+				// 名前とEmailをユーザーが入力したものに設定
+				art.setName(article.getName());
+				art.setEmail(article.getEmail());
 				
-				// バリデーションエラーがなかったら入力情報をセッションに再設定
-				session.setAttribute("ArticleBean", articleBean);
-					
-				// 記事が作成できたら、完了画面にリダイレクト
-				resultPage = PropertyLoader.getProperty("url.bbs.complete");
+				// 更新したArticleBeanをセッションに再設定
+				session.setAttribute("ArticleBean", art);
+				
+			} catch (NamingException | SQLException e) {
+				errorMessages = "エラーが発生しました。";
+				request.setAttribute("errorMessage", errorMessages);
+				resultPage = PropertyLoader.getProperty("url.jsp.error");
 				response.sendRedirect(resultPage);
 				return;
 			}
-		// "Back" ボタンが押された場合
+			
+			// 記事が作成できたら、完了画面にリダイレクト
+			resultPage = PropertyLoader.getProperty("url.bbs.complete");
+			response.sendRedirect(resultPage);
+			return;
+			
+		// 戻るボタンが押された場合
 		} else if (request.getParameter("Back") != null) {
 			resultPage = PropertyLoader.getProperty("url.bbs.input");
 			response.sendRedirect(resultPage);

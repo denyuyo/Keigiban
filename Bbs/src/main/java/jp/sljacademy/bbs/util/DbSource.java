@@ -7,10 +7,10 @@ import javax.sql.DataSource;
 // DataSourceを一つだけにしたい
 
 public class DbSource {
-	// データベースへの接続情報を格納
+	// データベースへの接続情報を格納するための変数を用意
 	private static DataSource dataSource;
 	
-	// コンストラクタ
+	// いっぱい作られないコンストラクタを用意（他も見えてないだけであるから空でもいい）
 	private DbSource() {
 	}
 	
@@ -19,6 +19,7 @@ public class DbSource {
 		if (dataSource == null) {
 			// コンテキストを取得し、データソースを初期化
 			InitialContext context = new InitialContext();
+			// データベース接続の情報を代入（参照先をみにいっている）
 			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/datasource"); 
 		}
 		return dataSource;

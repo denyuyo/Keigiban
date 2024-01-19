@@ -4,7 +4,7 @@ package jp.sljacademy.bbs;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
@@ -32,15 +32,16 @@ public class InputServlet extends HttpServlet {
 		super();
 	}
 	
+	// 色情報と過去記事データが詰まったメソッド
 	private void fetchAndSetData(HttpServletRequest request) throws NamingException, SQLException {
 		// 色情報を取得
 		ColorMasterDao colorDao = new ColorMasterDao();
-		List<ColorMasterBean> colors = colorDao.getAllColors();
+		ArrayList<ColorMasterBean> colors = colorDao.getAllColors();
 		request.setAttribute("colors", colors);
 		
 		// 過去記事データを取得
 		ArticleDao dao = new ArticleDao();
-		List<ArticleBean> articles = dao.getAllArticles();
+		ArrayList<ArticleBean> articles = dao.getAllArticles();
 		request.setAttribute("articles", articles);
 	}
 	
@@ -58,7 +59,7 @@ public class InputServlet extends HttpServlet {
 		
 		String errorMessages = "";
 		
-		// セッションを取得して、存在しない場合は null を返します
+		// セッションを取得して、ユーザーがログインしていない場合は新しいセッションを作成する必要がないので、 null を返します
 		HttpSession session = request.getSession(false);
 		
 		// セッションが存在しない、またはセッション属性 "account" が存在しない場合
@@ -99,8 +100,8 @@ public class InputServlet extends HttpServlet {
 		
 		String errorMessages = "";
 		
-		// セッションを取得して、存在しない場合は新しく作ります
-		HttpSession session = request.getSession();
+		// セッションを取得して、存在しない場合は null を返す
+		HttpSession session = request.getSession(false);
 		
 		// 記事情報を初期化
 		ArticleBean articleBean =  null;
@@ -109,10 +110,9 @@ public class InputServlet extends HttpServlet {
 		if (request.getParameter("clear") != null) {
 			// クリア時のデフォルト値
 			articleBean = new ArticleBean();
-			articleBean.setName("");
-			articleBean.setEmail("");
 		
 			try {
+				// 共通のデータ取得処理を呼び出す
 				 fetchAndSetData(request);
 			} catch (NamingException | SQLException e) {
 				errorMessages = "エラーが発生しました。";
@@ -139,6 +139,8 @@ public class InputServlet extends HttpServlet {
 			articleBean.setText(request.getParameter("text"));
 			articleBean.setColorId(request.getParameter("color"));
 			
+			// セッションに入力内容を保存（エラーがあっても）
+			session.setAttribute("ArticleBean", articleBean);
 			
 			// 記事情報にバリデーションをかけて、エラーメッセージを表示できるよう準備します
 			errorMessages = CommonFunction.validate(articleBean);
@@ -149,6 +151,7 @@ public class InputServlet extends HttpServlet {
 				request.setAttribute("errorMessages", errorMessages);
 				
 				try {
+					// 共通のデータ取得処理を呼び出す
 					 fetchAndSetData(request);
 				} catch (Exception e) {
 					errorMessages = "エラーが発生しました。";
@@ -162,9 +165,6 @@ public class InputServlet extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
-			
-			// 問題ない場合、入力情報をセッションに再設定してCOMFIRMにリダイレクトします
-			session.setAttribute("ArticleBean", articleBean);
 			
 			resultPage = PropertyLoader.getProperty("url.bbs.confirm");
 			response.sendRedirect(resultPage);

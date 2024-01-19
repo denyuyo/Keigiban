@@ -20,7 +20,7 @@ public class CommonFunction {
 	public static boolean checkEmail(String email) {
 		
 		// 空白文字列の場合は true を返す
-		if (email == null || email.trim().isEmpty()) {
+		if (email == null || email.isEmpty()) {
 			return true;
 		}
 		/*
@@ -37,13 +37,13 @@ public class CommonFunction {
 	// 文字列の長さが特定の長さ以下かどうかをチェックする checkLen メソッド
 	public static boolean checkLen(String text, int maxLength) {
 		// 文字列 text が存在し、かつその長さが指定された最大長 maxLength 以下である場合に true を返し、それ以外の場合に false を返す
-		return text != null && text.length() <= maxLength;
+		return text.length() <= maxLength;
 	}
 	
 	// 文字列が空かどうかをチェックする isNotBlank メソッド
 	public static boolean isBlank(String text) {
-		// 文字列 text が存在せず、trim() で前後の空白を取り除いても空である場合に true を返し、それ以外の場合に false を返す
-		return text == null || text.trim().isEmpty();
+		// 文字列 text が存在せず、空である場合に true を返し、それ以外の場合に false を返す
+		return text == null || text.isEmpty();
 	}
 	
 	/*

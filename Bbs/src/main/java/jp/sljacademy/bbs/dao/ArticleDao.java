@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.naming.NamingException;
 
@@ -21,8 +20,26 @@ public class ArticleDao {
 	public void createArticle(ArticleBean article) throws SQLException, NamingException {
 		Connection connection = null;
 		
-		// 現在の日時と指定された記事の詳細情報を ARTICLE テーブルに新しい行として挿入する
-		String sql = "INSERT INTO ARTICLE (CREATE_DATE, NAME, EMAIL, TITLE, TEXT, COLOR_ID) VALUES (NOW(), ?, ?, ?, ?, ?)";
+		// 指定された記事の詳細情報と現在の日時を ARTICLE テーブルに新しい行として挿入する
+		String sql = 
+			"INSERT INTO ARTICLE ("
+			+ 	"CREATE_DATE, "
+			+ 	"NAME, "
+			+ 	"EMAIL, "
+			+ 	"TITLE, "
+			+ 	"TEXT, "
+			+ 	"COLOR_ID, "
+			+ 	"DEL_FLG "
+			+ ") VALUES ("
+			+ 	"NOW(),  "
+			+ 	"?, "
+			+ 	"?, "
+			+ 	"?, "
+			+ 	"?, "
+			+ 	"?, "
+			+ 	"0"
+			+ ");";
+		
 		try {
 			// データベースへの接続を確立
 			connection = DbSource.getDateSource().getConnection();
@@ -48,27 +65,31 @@ public class ArticleDao {
 	}
 	
 	// データベースからすべての記事を取得
-	public List<ArticleBean> getAllArticles() throws SQLException, NamingException {
+	public ArrayList<ArticleBean> getAllArticles() throws SQLException, NamingException {
 		Connection connection = null;
 		
-		List<ArticleBean> articles = new ArrayList<>();
+		ArrayList<ArticleBean> articles = new ArrayList<ArticleBean>();
 		// ARTICLE テーブルと COLOR_MASTER テーブルのCOLOR_IDが一致した場合、結合して COLOR_MASTER テーブル の COLOR_CODEを取得
 		String sql = 
 			"SELECT "
-				+ "ARTICLE.ARTICLE_ID,"
-				+ " ARTICLE.CREATE_DATE, "
-				+ "ARTICLE.NAME,"
-				+ " ARTICLE.EMAIL,"
-				+ " ARTICLE.TITLE,"
-				+ " ARTICLE.TEXT,"
-				+ " ARTICLE.COLOR_ID,"
-				+ " COLOR_MASTER.COLOR_CODE "
+			+ 	"ARTICLE.ARTICLE_ID,"
+			+ 	"ARTICLE.CREATE_DATE, "
+			+ 	"ARTICLE.NAME,"
+			+ 	"ARTICLE.EMAIL,"
+			+ 	"ARTICLE.TITLE,"
+			+ 	"ARTICLE.TEXT,"
+			+ 	"ARTICLE.COLOR_ID,"
+			+ 	"COLOR_MASTER.COLOR_CODE "
 			+ "FROM "
-				+ "ARTICLE "
+			+ 	"ARTICLE "
 			+ "JOIN "
-				+ "COLOR_MASTER "
+			+ 	"COLOR_MASTER "
 			+ "ON "
-				+ "ARTICLE.COLOR_ID = COLOR_MASTER.COLOR_ID;";
+			+ 	"ARTICLE.COLOR_ID = COLOR_MASTER.COLOR_ID "
+			+ "ORDER BY "
+			// 降順で取得
+			+ 	"ARTICLE.CREATE_DATE DESC;";
+		
 		try {
 			// データベース接続を確立
 			connection = DbSource.getDateSource().getConnection();

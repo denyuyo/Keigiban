@@ -3,7 +3,9 @@ package jp.sljacademy.bbs.bean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-// 記事
+import jp.sljacademy.bbs.util.CommonFunction;
+
+// 記事情報モデル(入力項目がある→newして紙を作る)
 
 public class ArticleBean {
 	
@@ -16,9 +18,10 @@ public class ArticleBean {
 	private String colorId;
 	private String colorCode;
 	
-
 	public ArticleBean()  {
 		// 初期値を空白
+		name = "";
+		email = "";
 		title = "";
 		text = "";
 		// checkdを"青"
@@ -30,13 +33,6 @@ public class ArticleBean {
 	}
 	public void setArticleId(int articleId) {
 		this.articleId = articleId;
-	}
-	
-	public String getCreateDateView() {
-		// 指定されたフォーマットで日付と時刻を表示するためのフォーマッタを作成
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分");
-		// createDate という日付情報を、上記で作成したフォーマッタ sdf を使用して指定されたフォーマットに整形し、文字列として返す
-		return sdf.format(createDate);
 	}
 	
 	public Date getCreateDate() {
@@ -86,5 +82,24 @@ public class ArticleBean {
 	}
 	public void setColorCode(String colorCode) {
 		this.colorCode = colorCode;
+	}
+	
+	public String getNameView() {
+		return CommonFunction.getDefault(name, "nobody");
+	}
+	
+	public String getTitleView() {
+		return CommonFunction.getDefault(title, "(no title)");
+	}
+	
+	public String getTextView() {
+		return CommonFunction.convertLineBreaksToHtml(text);
+	}
+	
+	public String getCreateDateView() {
+		// 指定されたフォーマットで日付と時刻を表示するためのフォーマッタを作成
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH時mm分");
+		// createDate という日付情報を、上記で作成したフォーマッタ sdf を使用して指定されたフォーマットに整形し、文字列として返す
+		return sdf.format(createDate);
 	}
 }
